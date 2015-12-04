@@ -84,7 +84,7 @@ public class InstructionDaoImpl implements IInstructionDao
 	public int update(Instruction t)
 	{
 		int result = -1;
-		String sql = "update instruction set `deviceid`=:deviceid,`ver`=:ver,`esn`=:esn,`type`=:type,\n"
+		String sql = "update instruction set `result`=:result,`deviceid`=:deviceid,`ver`=:ver,`esn`=:esn,`type`=:type,\n"
 				+ "`url`=:url,`num`=:num,`enable`=:enable,`createdat`=:createdat,`updatedat`=:updatedat WHERE `id`=:id";
 		SqlParameterSource sps = new BeanPropertySqlParameterSource(t);
 		try
@@ -100,8 +100,18 @@ public class InstructionDaoImpl implements IInstructionDao
 	@Override
 	public Instruction get(int id)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		List<Instruction> list = null;
+		String sql = "SELECT\n" + "	*\n" + "FROM\n" + "	instruction\n"
+				+ "WHERE\n" + "id = " + id;
+		try
+		{
+			list = this.jdbcTemplate.query(sql,
+					new BeanPropertyRowMapper<Instruction>(Instruction.class));
+		} catch (DataAccessException e)
+		{
+			logger.error(e.getMessage());
+		}
+		return (list != null && list.size() == 1) ? list.get(0) : null;
 	}
 
 	@Override

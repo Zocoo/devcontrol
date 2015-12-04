@@ -29,4 +29,8 @@
 		<property name="instructionService" ref="instructionService" />
 		<property name="deviceInfoService" ref="deviceInfoService" />
 	</bean>
+	<bean name="acceptController" class="com.zpd.web.controller.AcceptController"
+		scope="prototype">
+		<property name="instructionService" ref="instructionService" />
+	</bean>
 </beans>

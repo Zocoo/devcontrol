@@ -19,7 +19,7 @@ package com.zpd.pojo;
 public class Data
 {
 	private String	gw_id;
-	private String	transaction_id;
+	private Integer	transaction_id;
 	private String	method;
 	private String	type;
 	private Integer	code;
@@ -47,12 +47,12 @@ public class Data
 		this.gw_id = gw_id;
 	}
 
-	public String getTransaction_id()
+	public Integer getTransaction_id()
 	{
 		return transaction_id;
 	}
 
-	public void setTransaction_id(String transaction_id)
+	public void setTransaction_id(Integer transaction_id)
 	{
 		this.transaction_id = transaction_id;
 	}

@@ -48,15 +48,13 @@ public class InstructionServiceImpl implements IInstructionService, ErrorCode
 	@Override
 	public int update(Instruction t)
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		return this.instructionDao.update(t);
 	}
 
 	@Override
 	public Instruction get(int id)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return this.instructionDao.get(id);
 	}
 
 	@Override

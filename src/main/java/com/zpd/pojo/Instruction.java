@@ -27,7 +27,18 @@ public class Instruction
 	private Integer	updatedat;
 	private Integer	createdat;
 	private String	esn;
+	private boolean	result;
 	private boolean	enable;
+
+	public boolean isResult()
+	{
+		return result;
+	}
+
+	public void setResult(boolean result)
+	{
+		this.result = result;
+	}
 
 	public String getVer()
 	{

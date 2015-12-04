@@ -14,7 +14,9 @@ import com.zpd.pojo.Message;
 /**
  * TODO
  * 
- * @author wuyize @version v1.0.0
+ * @author wuyize
+ * 
+ * @version v1.0.0
  * @date 2015年12月3日
  *
  */
@@ -49,7 +51,6 @@ public class MD5Msg
 			hexValue.append(Integer.toHexString(val));
 		}
 		return hexValue.toString();
-
 	}
 
 	/**
