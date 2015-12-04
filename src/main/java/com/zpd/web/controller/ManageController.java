@@ -23,6 +23,7 @@ import com.zpd.pojo.Data;
 import com.zpd.pojo.DeviceInfo;
 import com.zpd.pojo.Instruction;
 import com.zpd.pojo.Message;
+import com.zpd.pojo.wrap.ImageUpgrade;
 import com.zpd.service.IDeviceInfoService;
 import com.zpd.service.IInstructionService;
 import com.zpd.utils.Const;
@@ -106,6 +107,7 @@ public class ManageController implements ErrorCode
 	public String heartbeat(ModelMap model,
 			@RequestBody(required = true) String data) throws IOException
 	{
+		String jsonString = "";
 		Data da = null;
 		JSONObject json = null;
 		System.out.println("====>" + data);
@@ -119,16 +121,38 @@ public class ManageController implements ErrorCode
 				{
 					Instruction ins = this.instructionService
 							.queryInsByEsn(json.getString("gw_id"));
+					da = new Data();
+					da.setTransaction_id(json.getString("transaction_id"));
+					da.setGw_id(json.getString("gw_id"));
+					da.setType("REQUEST");
 					if (ins == null)
 					{
-						da = new Data();
-						da.setCode(1);
+						da.setOpreation("closeConn");
+						da.setCode(0);
+						da.setMessage("success");
+					} else
+					{
+						// 0重启，1升级，2修改ssid，3配置设备
+						if (ins.getType().equals(0))
+						{
+							da.setOpreation("restart");
+							da.setMethod("system");
+						} else if (ins.getType().equals(1))
+						{
+							da.setOpreation("imageUpgrade");
+							da.setMethod("system");
+							ImageUpgrade valueSet = new ImageUpgrade();
+							valueSet.setUrl(ins.getUrl());
+							valueSet.setVer("v100");
+							da.setValueSet(valueSet);
+						}
 					}
+					jsonString = JSON.toJSONString(da);
 				}
 			}
 		}
 		msg.setData(data);
-		String jsonData = JsonMessage.getJsonMsg(MD5Msg.Md5(data));
+		String jsonData = JsonMessage.getJsonMsg(MD5Msg.Md5(jsonString));
 		model.addAttribute("data", jsonData);
 		return Const.VIEW_JSON;
 	}

@@ -54,11 +54,11 @@ public class InstructionDaoImpl implements IInstructionDao
 	public int save(Instruction t)
 	{
 		int result = -1;
-		String sql = "INSERT INTO instruction (\n" + "	`esn`,\n"
-				+ "	`updatedat`,\n" + "	`deviceid`,\n" + "	`type`,\n"
-				+ "	`url`,\n" + "	`createdat`,\n" + "	`num`,\n"
-				+ "	`enable`\n" + ")\n" + "VALUES\n" + "	(\n"
-				+ ":esn ,	:updatedat ,:deviceid ,:type ,:url ,:createdat ,:num ,:enable\n"
+		String sql = "INSERT INTO instruction (\n" + "	`ver`,\n"
+				+ "	`esn`,\n" + "	`updatedat`,\n" + "	`deviceid`,\n"
+				+ "	`type`,\n" + "	`url`,\n" + "	`createdat`,\n"
+				+ "	`num`,\n" + "	`enable`\n" + ")\n" + "VALUES\n" + "	(\n"
+				+ ":ver , :esn ,	:updatedat ,:deviceid ,:type ,:url ,:createdat ,:num ,:enable\n"
 				+ "	)";
 		SqlParameterSource sps = new BeanPropertySqlParameterSource(t);
 		KeyHolder key = new GeneratedKeyHolder();
@@ -83,8 +83,18 @@ public class InstructionDaoImpl implements IInstructionDao
 	@Override
 	public int update(Instruction t)
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		int result = -1;
+		String sql = "update instruction set `deviceid`=:deviceid,`ver`=:ver,`esn`=:esn,`type`=:type,\n"
+				+ "`url`=:url,`num`=:num,`enable`=:enable,`createdat`=:createdat,`updatedat`=:updatedat WHERE `id`=:id";
+		SqlParameterSource sps = new BeanPropertySqlParameterSource(t);
+		try
+		{
+			result = this.jdbcTemplate.update(sql, sps);
+		} catch (DataAccessException e)
+		{
+			logger.error(e.getMessage());
+		}
+		return result;
 	}
 
 	@Override
@@ -134,7 +144,8 @@ public class InstructionDaoImpl implements IInstructionDao
 	{
 		List<Instruction> list = null;
 		String sql = "SELECT\n" + "	*\n" + "FROM\n" + "	instruction\n"
-				+ "WHERE\n" + "	ENABLE = 1\n" + "AND esn =:esn ";
+				+ "WHERE\n" + "	`ENABLE` = 0\n"
+				+ "AND esn =:esn and num<5 order by createdat asc limit 1";
 		SqlParameterSource sps = new MapSqlParameterSource("esn", esn);
 		try
 		{

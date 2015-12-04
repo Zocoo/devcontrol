@@ -18,6 +18,7 @@ package com.zpd.pojo;
  */
 public class Instruction
 {
+	private String	ver;
 	private Integer	id;
 	private Integer	deviceid;
 	private Integer	type;
@@ -27,6 +28,16 @@ public class Instruction
 	private Integer	createdat;
 	private String	esn;
 	private boolean	enable;
+
+	public String getVer()
+	{
+		return ver;
+	}
+
+	public void setVer(String ver)
+	{
+		this.ver = ver;
+	}
 
 	public String getEsn()
 	{

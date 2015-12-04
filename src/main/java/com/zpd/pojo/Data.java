@@ -24,7 +24,7 @@ public class Data
 	private String	type;
 	private Integer	code;
 	private String	message;
-	private Object	object;
+	private Object	valueSet;
 	private String	opreation;
 
 	public String getOpreation()
@@ -97,14 +97,14 @@ public class Data
 		this.message = message;
 	}
 
-	public Object getObject()
+	public Object getValueSet()
 	{
-		return object;
+		return valueSet;
 	}
 
-	public void setObject(Object object)
+	public void setValueSet(Object valueSet)
 	{
-		this.object = object;
+		this.valueSet = valueSet;
 	}
 
 }
