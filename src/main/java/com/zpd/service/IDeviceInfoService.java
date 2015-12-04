@@ -15,12 +15,12 @@ import com.zpd.pojo.wrap.DeviceMsg;
 /**
  * 设备信息服务接口
  * 
- * @author Jacky
- * @version v1.0.0
+ * @author Jacky @version v1.0.0
  * @date 2015年11月22日
  * 
  */
-public interface IDeviceInfoService extends IBaseService<DeviceInfo> {
+public interface IDeviceInfoService extends IBaseService<DeviceInfo>
+{
 	/**
 	 * 通过SN查询设备详细信息
 	 * 
@@ -49,4 +49,13 @@ public interface IDeviceInfoService extends IBaseService<DeviceInfo> {
 	 * @return 是否成功
 	 */
 	int updateFromMp(DeviceInfo di, DeviceMsg dm);
+
+	/**
+	 * 通过ESN查询设备信息
+	 * 
+	 * @param esn
+	 *            设备esn
+	 * @return 设备信息 
+	 */
+	DeviceInfo getDeviceByEsn(String esn);
 }

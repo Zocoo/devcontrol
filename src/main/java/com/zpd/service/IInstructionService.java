@@ -28,4 +28,13 @@ public interface IInstructionService extends IBaseService<Instruction>
 	 * @return 处理是否成功
 	 */
 	Integer dealData(String str);
+
+	/**
+	 * 通过ESN查询没有执行的命令
+	 * 
+	 * @param esn
+	 *            设备的ESN嘛
+	 * @return 命名
+	 */
+	Instruction queryInsByEsn(String esn);
 }

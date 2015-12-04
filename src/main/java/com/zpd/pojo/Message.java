@@ -18,17 +18,17 @@ package com.zpd.pojo;
  */
 public class Message
 {
-	private String	json;
+	private String	data;
 	private String	MD5;
 
-	public String getJson()
+	public String getData()
 	{
-		return json;
+		return data;
 	}
 
-	public void setJson(String json)
+	public void setData(String data)
 	{
-		this.json = json;
+		this.data = data;
 	}
 
 	public String getMD5()

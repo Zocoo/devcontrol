@@ -70,7 +70,7 @@ public class MD5Msg
 	public static Message Md5(String str)
 	{
 		Message msg = new Message();
-		msg.setJson(str);
+		msg.setData(str);
 		String md5 = string2MD5(str + pwd);
 		msg.setMD5(md5);
 		return msg;

@@ -11,7 +11,9 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -52,11 +54,11 @@ public class InstructionDaoImpl implements IInstructionDao
 	public int save(Instruction t)
 	{
 		int result = -1;
-		String sql = "INSERT INTO instruction (\n" + "	`updatedat`,\n"
-				+ "	`orderid`,\n" + "	`type`,\n" + "	`url`,\n"
-				+ "	`createdat`,\n" + "	`num`,\n" + "	`enable`\n" + ")\n"
-				+ "VALUES\n" + "	(\n"
-				+ "	:updatedat ,:orderid ,:type ,:url ,:createdat ,:num ,:enable\n"
+		String sql = "INSERT INTO instruction (\n" + "	`esn`,\n"
+				+ "	`updatedat`,\n" + "	`deviceid`,\n" + "	`type`,\n"
+				+ "	`url`,\n" + "	`createdat`,\n" + "	`num`,\n"
+				+ "	`enable`\n" + ")\n" + "VALUES\n" + "	(\n"
+				+ ":esn ,	:updatedat ,:deviceid ,:type ,:url ,:createdat ,:num ,:enable\n"
 				+ "	)";
 		SqlParameterSource sps = new BeanPropertySqlParameterSource(t);
 		KeyHolder key = new GeneratedKeyHolder();
@@ -125,6 +127,24 @@ public class InstructionDaoImpl implements IInstructionDao
 	{
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public Instruction queryInsByEsn(String esn)
+	{
+		List<Instruction> list = null;
+		String sql = "SELECT\n" + "	*\n" + "FROM\n" + "	instruction\n"
+				+ "WHERE\n" + "	ENABLE = 1\n" + "AND esn =:esn ";
+		SqlParameterSource sps = new MapSqlParameterSource("esn", esn);
+		try
+		{
+			list = this.jdbcTemplate.query(sql, sps,
+					new BeanPropertyRowMapper<Instruction>(Instruction.class));
+		} catch (DataAccessException e)
+		{
+			logger.error(e.getMessage());
+		}
+		return (list != null && list.size() == 1) ? list.get(0) : null;
 	}
 
 }

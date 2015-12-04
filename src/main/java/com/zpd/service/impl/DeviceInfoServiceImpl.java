@@ -26,26 +26,29 @@ import com.zpd.utils.Time;
 /**
  * 设备信息服务接口实现
  * 
- * @author Jacky
- * @version v1.0.0
+ * @author Jacky @version v1.0.0
  * @date 2015年11月22日
  * 
  */
-public class DeviceInfoServiceImpl implements IDeviceInfoService, ErrorCode {
-	private IDeviceInfoDao deviceInfoDao;
-	private IVerdorDao vendorDao;
+public class DeviceInfoServiceImpl implements IDeviceInfoService, ErrorCode
+{
+	private IDeviceInfoDao	deviceInfoDao;
+	private IVerdorDao		vendorDao;
 
-	public void setVendorDao(IVerdorDao vendorDao) {
+	public void setVendorDao(IVerdorDao vendorDao)
+	{
 		this.vendorDao = vendorDao;
 	}
 
 	private IDeviceTypeDao deviceTypeDao;
 
-	public void setDeviceTypeDao(IDeviceTypeDao deviceTypeDao) {
+	public void setDeviceTypeDao(IDeviceTypeDao deviceTypeDao)
+	{
 		this.deviceTypeDao = deviceTypeDao;
 	}
 
-	public void setDeviceInfoDao(IDeviceInfoDao deviceInfoDao) {
+	public void setDeviceInfoDao(IDeviceInfoDao deviceInfoDao)
+	{
 		this.deviceInfoDao = deviceInfoDao;
 	}
 
@@ -55,7 +58,8 @@ public class DeviceInfoServiceImpl implements IDeviceInfoService, ErrorCode {
 	 * @see com.zpd.service.IBaseService#save(java.lang.Object)
 	 */
 	@Override
-	public int save(DeviceInfo t) {
+	public int save(DeviceInfo t)
+	{
 		// TODO Auto-generated method stub
 		return 0;
 	}
@@ -66,7 +70,8 @@ public class DeviceInfoServiceImpl implements IDeviceInfoService, ErrorCode {
 	 * @see com.zpd.service.IBaseService#delete(int)
 	 */
 	@Override
-	public int delete(int id) {
+	public int delete(int id)
+	{
 		// TODO Auto-generated method stub
 		return 0;
 	}
@@ -77,7 +82,8 @@ public class DeviceInfoServiceImpl implements IDeviceInfoService, ErrorCode {
 	 * @see com.zpd.service.IBaseService#update(java.lang.Object)
 	 */
 	@Override
-	public int update(DeviceInfo t) {
+	public int update(DeviceInfo t)
+	{
 		// TODO Auto-generated method stub
 		return 0;
 	}
@@ -88,7 +94,8 @@ public class DeviceInfoServiceImpl implements IDeviceInfoService, ErrorCode {
 	 * @see com.zpd.service.IBaseService#get(int)
 	 */
 	@Override
-	public DeviceInfo get(int id) {
+	public DeviceInfo get(int id)
+	{
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -99,7 +106,8 @@ public class DeviceInfoServiceImpl implements IDeviceInfoService, ErrorCode {
 	 * @see com.zpd.service.IBaseService#getCount()
 	 */
 	@Override
-	public long getCount() {
+	public long getCount()
+	{
 		// TODO Auto-generated method stub
 		return 0;
 	}
@@ -110,7 +118,8 @@ public class DeviceInfoServiceImpl implements IDeviceInfoService, ErrorCode {
 	 * @see com.zpd.service.IBaseService#getCount(int, int)
 	 */
 	@Override
-	public long getCount(int key, int value) {
+	public long getCount(int key, int value)
+	{
 		// TODO Auto-generated method stub
 		return 0;
 	}
@@ -121,7 +130,8 @@ public class DeviceInfoServiceImpl implements IDeviceInfoService, ErrorCode {
 	 * @see com.zpd.service.IBaseService#initTop(int)
 	 */
 	@Override
-	public List<DeviceInfo> initTop(int limit) {
+	public List<DeviceInfo> initTop(int limit)
+	{
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -132,7 +142,8 @@ public class DeviceInfoServiceImpl implements IDeviceInfoService, ErrorCode {
 	 * @see com.zpd.service.IBaseService#paginate(com.zpd.utils.Paginate)
 	 */
 	@Override
-	public List<DeviceInfo> paginate(Paginate pag) {
+	public List<DeviceInfo> paginate(Paginate pag)
+	{
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -144,15 +155,18 @@ public class DeviceInfoServiceImpl implements IDeviceInfoService, ErrorCode {
 	 * com.zpd.utils.Paginate)
 	 */
 	@Override
-	public List<DeviceInfo> paginate(int key, int value, Paginate pag) {
+	public List<DeviceInfo> paginate(int key, int value, Paginate pag)
+	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<DeviceInfo> getDeviceInfoBySn(String[] sn) {
+	public List<DeviceInfo> getDeviceInfoBySn(String[] sn)
+	{
 		String strsn = "(";
-		for (int i = 0; i < sn.length; i++) {
+		for (int i = 0; i < sn.length; i++)
+		{
 			if (i == 0)
 				strsn = strsn + "'" + sn[i] + "'";
 			else
@@ -163,24 +177,30 @@ public class DeviceInfoServiceImpl implements IDeviceInfoService, ErrorCode {
 	}
 
 	@Override
-	public DeviceInfo getDeviceInfoBySn(String sn) {
+	public DeviceInfo getDeviceInfoBySn(String sn)
+	{
 		return this.deviceInfoDao.getDeviceInfoBySn(sn);
 	}
 
 	@Override
-	public int updateFromMp(DeviceInfo di, DeviceMsg dm) {
+	public int updateFromMp(DeviceInfo di, DeviceMsg dm)
+	{
 		int code = -1;
-		if (di != null && dm != null) {
+		if (di != null && dm != null)
+		{
 			int unixTime = Time.toUnixTime(Time.now());
-			if (!StringUtils.isEmpty(dm.getModel())) {
+			if (!StringUtils.isEmpty(dm.getModel()))
+			{
 				DeviceType dt = null;
 				dt = this.deviceInfoDao.getDeviceTypeByName(dm.getModel());
-				if (dt == null) {
+				if (dt == null)
+				{
 					dt = new DeviceType();
 					dt.setEnable(true);
 					dt.setIntro("");
 					if (di.getDeviceCategoryId() != null
-							&& !StringUtils.isEmpty((dm.getModel()))) {
+							&& !StringUtils.isEmpty((dm.getModel())))
+					{
 						dt.setName(dm.getModel());
 						dt.setDeviceCategoryId(di.getDeviceCategoryId());
 						dt.setCreatedAt(unixTime);
@@ -190,18 +210,23 @@ public class DeviceInfoServiceImpl implements IDeviceInfoService, ErrorCode {
 							if (dt.getId() != null)
 								di.setDeviceTypeId(dt.getId());
 					}
-				} else {
+				} else
+				{
 					di.setDeviceTypeId(dt.getId());
 				}
 			}
-			if (!StringUtils.isEmpty(dm.getVendor())) {
+			if (!StringUtils.isEmpty(dm.getVendor()))
+			{
 				Vendor vd = null;
 				DeviceType dt = null;
-				if (di.getDeviceTypeId() != null) {
+				if (di.getDeviceTypeId() != null)
+				{
 					dt = this.deviceTypeDao.get(di.getDeviceTypeId());
-					if (dt != null) {
+					if (dt != null)
+					{
 						vd = this.deviceInfoDao.getVendorByName(dm.getVendor());
-						if (vd == null) {
+						if (vd == null)
+						{
 							vd = new Vendor();
 							vd.setCreatedAt(unixTime);
 							vd.setEnable(true);
@@ -212,7 +237,8 @@ public class DeviceInfoServiceImpl implements IDeviceInfoService, ErrorCode {
 							if (result > 0)
 								if (vd.getId() != null)
 									dt.setVendorId(vd.getId());
-						} else {
+						} else
+						{
 							dt.setVendorId(vd.getId());
 						}
 						this.deviceTypeDao.update(dt);
@@ -226,5 +252,11 @@ public class DeviceInfoServiceImpl implements IDeviceInfoService, ErrorCode {
 			code = this.deviceInfoDao.update(di);
 		}
 		return code > 0 ? SUCCESS : FAILED;
+	}
+
+	@Override
+	public DeviceInfo getDeviceByEsn(String esn)
+	{
+		return this.deviceInfoDao.getDeviceByEsn(esn);
 	}
 }

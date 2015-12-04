@@ -27,4 +27,7 @@
 	<bean id="deviceInfoDao" class="com.zpd.dao.impl.DeviceInfoDaoImpl">
 		<property name="jdbcTemplate" ref="jdbcTemplate" />
 	</bean>
+	<bean id="instructionDao" class="com.zpd.dao.impl.InstructionDaoImpl">
+		<property name="jdbcTemplate" ref="jdbcTemplate" />
+	</bean>
 </beans>

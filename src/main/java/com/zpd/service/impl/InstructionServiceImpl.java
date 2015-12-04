@@ -103,4 +103,10 @@ public class InstructionServiceImpl implements IInstructionService, ErrorCode
 		return result > 0 ? SUCCESS : FAILED;
 	}
 
+	@Override
+	public Instruction queryInsByEsn(String esn)
+	{
+		return this.instructionDao.queryInsByEsn(esn);
+	}
+
 }

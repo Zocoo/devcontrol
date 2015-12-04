@@ -25,7 +25,18 @@ public class Instruction
 	private Integer	num;
 	private Integer	updatedat;
 	private Integer	createdat;
+	private String	esn;
 	private boolean	enable;
+
+	public String getEsn()
+	{
+		return esn;
+	}
+
+	public void setEsn(String esn)
+	{
+		this.esn = esn;
+	}
 
 	public Integer getUpdatedat()
 	{

@@ -15,8 +15,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.zpd.json.JsonMessage;
+import com.zpd.pojo.Data;
+import com.zpd.pojo.DeviceInfo;
+import com.zpd.pojo.Instruction;
 import com.zpd.pojo.Message;
+import com.zpd.service.IDeviceInfoService;
 import com.zpd.service.IInstructionService;
 import com.zpd.utils.Const;
 import com.zpd.utils.ErrorCode;
@@ -36,7 +43,13 @@ import com.zpd.utils.Msg;
 @RequestMapping("/manage")
 public class ManageController implements ErrorCode
 {
-	private IInstructionService instructionService;
+	private IInstructionService	instructionService;
+	private IDeviceInfoService	deviceInfoService;
+
+	public void setDeviceInfoService(IDeviceInfoService deviceInfoService)
+	{
+		this.deviceInfoService = deviceInfoService;
+	}
 
 	public void setInstructionService(IInstructionService instructionService)
 	{
@@ -44,16 +57,77 @@ public class ManageController implements ErrorCode
 	}
 
 	/**
-	 * 接收设备的心跳
+	 * 设备注册
 	 */
-	@RequestMapping("/heartbeat")
-	public String heartbeat(ModelMap model, HttpServletRequest request,
+	@RequestMapping("/register")
+	public String register(ModelMap model,
 			@RequestBody(required = true) String data, String sign)
 					throws IOException
 	{
+		JSONObject json = null;
+		DeviceInfo di = null;
+		int code = FAILED;
+		System.out.println("====>" + data);
+		if (data != null)
+		{
+			json = JSON.parseObject(data);
+			if (json != null)
+				if (json.getString("gw_id") != null)
+				{
+					di = new DeviceInfo();
+					di = this.deviceInfoService
+							.getDeviceByEsn(json.getString("gw_id"));
+				}
+		}
+		if (di != null)
+			code = SUCCESS;
+		Data da = new Data();
+		Message msg = new Message();
+		da.setCode(code);
+		if (code == SUCCESS)
+			da.setMessage("success");
+		else
+			da.setMessage("failed");
+		da.setGw_id(json.getString("gw_id"));
+		da.setTransaction_id(json.getString("transaction_id"));
+		da.setMethod("system");
+		da.setType("REQUEST");
+		String jsonString = JSON.toJSONString(da);
+		msg.setData(jsonString);
+		String jsonData = JsonMessage.getJsonMsg(MD5Msg.Md5(jsonString));
+		model.addAttribute("data", jsonData);
+		return Const.VIEW_JSON;
+	}
+
+	/**
+	 * 接收设备的心跳
+	 */
+	@RequestMapping("/heartbeat")
+	public String heartbeat(ModelMap model,
+			@RequestBody(required = true) String data) throws IOException
+	{
+		Data da = null;
+		JSONObject json = null;
 		System.out.println("====>" + data);
 		Message msg = new Message();
-		msg.setJson(data);
+		if (data != null)
+		{
+			json = JSON.parseObject(data);
+			if (json != null)
+			{
+				if (json.getString("gw_id") != null)
+				{
+					Instruction ins = this.instructionService
+							.queryInsByEsn(json.getString("gw_id"));
+					if (ins == null)
+					{
+						da = new Data();
+						da.setCode(1);
+					}
+				}
+			}
+		}
+		msg.setData(data);
 		String jsonData = JsonMessage.getJsonMsg(MD5Msg.Md5(data));
 		model.addAttribute("data", jsonData);
 		return Const.VIEW_JSON;

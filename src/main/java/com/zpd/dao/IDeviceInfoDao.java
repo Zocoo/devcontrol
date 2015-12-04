@@ -16,12 +16,12 @@ import com.zpd.pojo.Vendor;
 /**
  * 设备信息接口
  * 
- * @author Jacky
- * @version v1.0.0
+ * @author Jacky @version v1.0.0
  * @date 2015年11月22日
  * 
  */
-public interface IDeviceInfoDao extends IBaseDao<DeviceInfo> {
+public interface IDeviceInfoDao extends IBaseDao<DeviceInfo>
+{
 	/**
 	 * 通过sn查询设备集合
 	 * 
@@ -75,4 +75,13 @@ public interface IDeviceInfoDao extends IBaseDao<DeviceInfo> {
 	 * @return Vendor
 	 */
 	Vendor getVendorByName(String name);
+
+	/**
+	 * 通过ESN查询设备信息
+	 * 
+	 * @param esn
+	 *            设备esn
+	 * @return 设备信息
+	 */
+	DeviceInfo getDeviceByEsn(String esn);
 }
