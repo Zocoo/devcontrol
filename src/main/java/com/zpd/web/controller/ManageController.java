@@ -130,9 +130,9 @@ public class ManageController implements ErrorCode
 						da.setMessage("success");
 					} else
 					{
-						boolean reusltCache = RedisClient.set("wuyize", ins);
-						System.out.println(
-								"==>" + reusltCache + "===>" + ins.getId());
+//						boolean reusltCache = RedisClient.set("wuyize", ins);
+//						System.out.println(
+//								"==>" + reusltCache + "===>" + ins.getId());
 						da.setTransaction_id(ins.getId());
 						// 0重启，1升级，2修改ssid，3配置设备
 						if (ins.getType().equals(0))
@@ -174,11 +174,11 @@ public class ManageController implements ErrorCode
 			@RequestBody(required = true) String data) throws IOException
 	{
 
-		Instruction wuyize = RedisClient.get("wuyize", Instruction.class);
-		if (wuyize != null)
-		{
-			System.out.println("从缓存中获取的对象，" + wuyize.getId());
-		}
+//		Instruction wuyize = RedisClient.get("wuyize", Instruction.class);
+//		if (wuyize != null)
+//		{
+//			System.out.println("从缓存中获取的对象，" + wuyize.getId());
+//		}
 
 		String jsonString = "";
 		Data da = null;
