@@ -174,7 +174,7 @@ public class ManageController implements ErrorCode
 			@RequestBody(required = true) String data) throws IOException
 	{
 
-		Instruction wuyize = RedisClient.get("zhuoxuan", Instruction.class);
+		Instruction wuyize = RedisClient.get("wuyize", Instruction.class);
 		if (wuyize != null)
 		{
 			System.out.println("从缓存中获取的对象，" + wuyize.getId());

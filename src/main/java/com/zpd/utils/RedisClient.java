@@ -43,7 +43,6 @@ public class RedisClient
 
 		String host = resourceBundle.getString("redis.ip");
 		int port = Integer.parseInt(resourceBundle.getString("redis.port"));
-		String pwd = resourceBundle.getString("redis.pwd");
 
 		JedisPoolConfig config = new JedisPoolConfig();
 		// 设置最大连接数
@@ -53,7 +52,7 @@ public class RedisClient
 		// 设置超时时间
 		config.setMaxWaitMillis(maxWait);
 		// 初始化连接池
-		jedisPool = new JedisPool(config, host, port, 3*60*1000, pwd);
+		jedisPool = new JedisPool(host, port);
 	}
 
 	/**
