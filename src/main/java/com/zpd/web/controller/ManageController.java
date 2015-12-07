@@ -23,6 +23,7 @@ import com.zpd.pojo.DeviceInfo;
 import com.zpd.pojo.Instruction;
 import com.zpd.pojo.Message;
 import com.zpd.pojo.wrap.ImageUpgrade;
+import com.zpd.pojo.wrap.SsidName;
 import com.zpd.service.IDeviceInfoService;
 import com.zpd.service.IInstructionService;
 import com.zpd.utils.Const;
@@ -91,6 +92,7 @@ public class ManageController implements ErrorCode
 			da.setMessage("failed");
 		da.setGw_id(json.getString("gw_id"));
 		da.setMethod("system");
+		da.setOpreation("register");
 		da.setType("REQUEST");
 		String jsonString = JSON.toJSONString(da);
 		msg.setData(jsonString);
@@ -102,7 +104,7 @@ public class ManageController implements ErrorCode
 	/**
 	 * 接收设备的心跳
 	 */
-	@RequestMapping("/ping")
+	@RequestMapping("/heartbeat")
 	public String heartbeat(ModelMap model,
 			@RequestBody(required = true) String data) throws IOException
 	{
@@ -120,6 +122,14 @@ public class ManageController implements ErrorCode
 				{
 					Instruction ins = this.instructionService
 							.queryInsByEsn(json.getString("gw_id"));
+					if (ins != null)
+					{
+						if (ins.getNum() != null)
+						{
+							ins.setNum(ins.getNum() + 1);
+							this.instructionService.update(ins);
+						}
+					}
 					da = new Data();
 					da.setGw_id(json.getString("gw_id"));
 					da.setType("REQUEST");
@@ -130,9 +140,9 @@ public class ManageController implements ErrorCode
 						da.setMessage("success");
 					} else
 					{
-//						boolean reusltCache = RedisClient.set("wuyize", ins);
-//						System.out.println(
-//								"==>" + reusltCache + "===>" + ins.getId());
+						boolean reusltCache = RedisClient.set("wuyize", ins);
+						System.out.println(
+								"==>" + reusltCache + "===>" + ins.getId());
 						da.setTransaction_id(ins.getId());
 						// 0重启，1升级，2修改ssid，3配置设备
 						if (ins.getType().equals(0))
@@ -154,6 +164,17 @@ public class ManageController implements ErrorCode
 						{
 							da.setOpreation("setWirelessInfo");
 							da.setMethod("wireless");
+							SsidName ssid = new SsidName();
+							if (!StringUtils.isEmpty(ins.getSsid()))
+							{
+								ssid.setSsid(
+										"uci set wireless.@wifi-iface[0].ssid="
+												+ ins.getSsid());
+							}
+							if (ssid != null)
+							{
+								da.setValueSet(ssid);
+							}
 						}
 					}
 					jsonString = JSON.toJSONString(da);
@@ -173,12 +194,12 @@ public class ManageController implements ErrorCode
 	public String result(ModelMap model,
 			@RequestBody(required = true) String data) throws IOException
 	{
-
-//		Instruction wuyize = RedisClient.get("wuyize", Instruction.class);
-//		if (wuyize != null)
-//		{
-//			System.out.println("从缓存中获取的对象，" + wuyize.getId());
-//		}
+		RedisClient.del("wuyize");
+		Instruction wuyize = RedisClient.get("wuyize", Instruction.class);
+		if (wuyize != null)
+		{
+			System.out.println("从缓存中获取的对象，" + wuyize.getId());
+		}
 
 		String jsonString = "";
 		Data da = null;
@@ -195,7 +216,6 @@ public class ManageController implements ErrorCode
 						.get(json.getInteger("transaction_id"));
 				reins.setEnable(true);
 				reins.setUpdatedat(unixTime);
-				reins.setNum(reins.getNum() + 1);
 				if (json.getInteger("code").equals(0))
 					reins.setResult(false);
 				else
@@ -205,6 +225,14 @@ public class ManageController implements ErrorCode
 				{
 					Instruction ins = this.instructionService
 							.queryInsByEsn(json.getString("gw_id"));
+					if (ins != null)
+					{
+						if (ins.getNum() != null)
+						{
+							ins.setNum(ins.getNum() + 1);
+							this.instructionService.update(ins);
+						}
+					}
 					da = new Data();
 					da.setGw_id(json.getString("gw_id"));
 					da.setType("REQUEST");
@@ -236,6 +264,17 @@ public class ManageController implements ErrorCode
 						{
 							da.setOpreation("setWirelessInfo");
 							da.setMethod("wireless");
+							SsidName ssid = new SsidName();
+							if (!StringUtils.isEmpty(ins.getSsid()))
+							{
+								ssid.setSsid(
+										"uci set wireless.@wifi-iface[0].ssid="
+												+ ins.getSsid());
+							}
+							if (ssid != null)
+							{
+								da.setValueSet(ssid);
+							}
 						}
 					}
 					jsonString = JSON.toJSONString(da);

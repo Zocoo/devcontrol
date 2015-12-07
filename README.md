@@ -1,5 +1,7 @@
 # devcontrol
 http://zpdteck.com:8081/doku.php?id=zpd:doc:spec:menu94
+
+result
 {
     "gw_id": "esn",
     "transaction_id": "2423534645",
@@ -10,9 +12,9 @@ http://zpdteck.com:8081/doku.php?id=zpd:doc:spec:menu94
     "valueSet": {}
 }
 
-
+heartbeat
 {
-    "gw_id": "456789",
+    "gw_id": "456123",
     "transaction_id": "2423534645",
     "type": "REQUEST",
     "operation": "heartbeat",
@@ -24,3 +26,45 @@ http://zpdteck.com:8081/doku.php?id=zpd:doc:spec:menu94
         "client_count": "10"
     }
 }
+
+register
+{
+    "transaction_id": "2423534645",
+    "gw_id": "456789",
+    "type": "REQUEST",
+    "operation": "register",
+    "valueSet": {
+        "check_time": "60",
+        "gw_mac": "x:x:x:x:x:x",
+        "ssid": "zopodo_wifi",
+        "gw_address": "192.168.1.1",
+        "router_vendor": "ZOPODO",
+        "router_type": "ZPD001A",
+        "wan_ip": "12.34.131.12",
+        "sv": "v1.0.0"
+    }
+}
+
+
+accept
+restart
+{
+    "sn": [
+        "123789",
+        "456123"
+    ],
+    "operation": "restart"
+}
+
+accept
+imageUpgrade
+{
+    "sn": [
+        "123789",
+        "456123"
+    ],
+    "operation": "imageUpgrade",
+    "version": 2
+}
+
+

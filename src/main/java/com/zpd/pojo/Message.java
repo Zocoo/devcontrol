@@ -19,7 +19,7 @@ package com.zpd.pojo;
 public class Message
 {
 	private String	data;
-	private String	MD5;
+	private String	md5;
 
 	public String getData()
 	{
@@ -31,13 +31,15 @@ public class Message
 		this.data = data;
 	}
 
-	public String getMD5()
+	public String getMd5()
 	{
-		return MD5;
+		return md5;
 	}
 
-	public void setMD5(String mD5)
+	public void setMd5(String md5)
 	{
-		MD5 = mD5;
+		this.md5 = md5;
 	}
+
+	
 }

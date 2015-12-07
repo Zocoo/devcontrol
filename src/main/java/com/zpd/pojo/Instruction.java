@@ -20,7 +20,6 @@ public class Instruction
 {
 	private String	ver;
 	private Integer	id;
-	private Integer	deviceid;
 	private Integer	type;
 	private String	url;
 	private Integer	num;
@@ -29,6 +28,28 @@ public class Instruction
 	private String	esn;
 	private boolean	result;
 	private boolean	enable;
+	private String	remark;
+	private String	ssid;
+
+	public String getRemark()
+	{
+		return remark;
+	}
+
+	public void setRemark(String remark)
+	{
+		this.remark = remark;
+	}
+
+	public String getSsid()
+	{
+		return ssid;
+	}
+
+	public void setSsid(String ssid)
+	{
+		this.ssid = ssid;
+	}
 
 	public boolean isResult()
 	{
@@ -88,16 +109,6 @@ public class Instruction
 	public void setId(Integer id)
 	{
 		this.id = id;
-	}
-
-	public Integer getDeviceid()
-	{
-		return deviceid;
-	}
-
-	public void setDeviceid(Integer deviceid)
-	{
-		this.deviceid = deviceid;
 	}
 
 	public Integer getType()

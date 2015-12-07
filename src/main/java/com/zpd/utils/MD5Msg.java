@@ -73,7 +73,7 @@ public class MD5Msg
 		Message msg = new Message();
 		msg.setData(str);
 		String md5 = string2MD5(str + pwd);
-		msg.setMD5(md5);
+		msg.setMd5(md5);
 		return msg;
 	}
 }

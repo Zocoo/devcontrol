@@ -8,6 +8,7 @@
 package com.zpd.dao;
 
 import com.zpd.pojo.Instruction;
+import com.zpd.pojo.Version;
 
 /**
  * TODO
@@ -28,4 +29,13 @@ public interface IInstructionDao extends IBaseDao<Instruction>
 	 * @return 命名
 	 */
 	Instruction queryInsByEsn(String esn);
+
+	/**
+	 * 通过id查询Version
+	 * 
+	 * @param id
+	 *            版本ID
+	 * @return Verison
+	 */
+	Version queryVersion(Integer id);
 }

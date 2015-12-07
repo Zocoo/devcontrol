@@ -30,7 +30,7 @@ import com.zpd.utils.Msg;
  *
  */
 @Controller
-@RequestMapping("/manage")
+@RequestMapping("/accept")
 public class AcceptController implements ErrorCode
 {
 	private IInstructionService instructionService;

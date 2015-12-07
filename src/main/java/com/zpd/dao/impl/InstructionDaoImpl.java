@@ -21,6 +21,7 @@ import org.springframework.jdbc.support.KeyHolder;
 
 import com.zpd.dao.IInstructionDao;
 import com.zpd.pojo.Instruction;
+import com.zpd.pojo.Version;
 import com.zpd.utils.LogFactory;
 import com.zpd.utils.Paginate;
 
@@ -54,11 +55,12 @@ public class InstructionDaoImpl implements IInstructionDao
 	public int save(Instruction t)
 	{
 		int result = -1;
-		String sql = "INSERT INTO instruction (\n" + "	`ver`,\n"
-				+ "	`esn`,\n" + "	`updatedat`,\n" + "	`deviceid`,\n"
-				+ "	`type`,\n" + "	`url`,\n" + "	`createdat`,\n"
-				+ "	`num`,\n" + "	`enable`\n" + ")\n" + "VALUES\n" + "	(\n"
-				+ ":ver , :esn ,	:updatedat ,:deviceid ,:type ,:url ,:createdat ,:num ,:enable\n"
+		String sql = "INSERT INTO instruction (\n" + "	`remark`,\n"
+				+ "	`ssid`,\n" + "	`ver`,\n" + "	`esn`,\n"
+				+ "	`updatedat`,\n" + "	`type`,\n" + "	`url`,\n"
+				+ "	`createdat`,\n" + "	`num`,\n" + "	`enable`\n" + ")\n"
+				+ "VALUES\n" + "	(\n"
+				+ ":remark ,:ssid ,:ver , :esn ,:updatedat ,:type ,:url ,:createdat ,:num ,:enable\n"
 				+ "	)";
 		SqlParameterSource sps = new BeanPropertySqlParameterSource(t);
 		KeyHolder key = new GeneratedKeyHolder();
@@ -84,7 +86,7 @@ public class InstructionDaoImpl implements IInstructionDao
 	public int update(Instruction t)
 	{
 		int result = -1;
-		String sql = "update instruction set `result`=:result,`deviceid`=:deviceid,`ver`=:ver,`esn`=:esn,`type`=:type,\n"
+		String sql = "update instruction set `remark`=:remark,`ssid`=:ssid,`result`=:result,`ver`=:ver,`esn`=:esn,`type`=:type,\n"
 				+ "`url`=:url,`num`=:num,`enable`=:enable,`createdat`=:createdat,`updatedat`=:updatedat WHERE `id`=:id";
 		SqlParameterSource sps = new BeanPropertySqlParameterSource(t);
 		try
@@ -155,12 +157,29 @@ public class InstructionDaoImpl implements IInstructionDao
 		List<Instruction> list = null;
 		String sql = "SELECT\n" + "	*\n" + "FROM\n" + "	instruction\n"
 				+ "WHERE\n" + "	`ENABLE` = 0\n"
-				+ "AND esn =:esn and num<5 order by createdat asc limit 1";
+				+ "AND esn =:esn and num<500 order by createdat asc limit 1";
 		SqlParameterSource sps = new MapSqlParameterSource("esn", esn);
 		try
 		{
 			list = this.jdbcTemplate.query(sql, sps,
 					new BeanPropertyRowMapper<Instruction>(Instruction.class));
+		} catch (DataAccessException e)
+		{
+			logger.error(e.getMessage());
+		}
+		return (list != null && list.size() == 1) ? list.get(0) : null;
+	}
+
+	@Override
+	public Version queryVersion(Integer id)
+	{
+		List<Version> list = null;
+		String sql = "SELECT\n" + "	*\n" + "FROM\n" + "	firmware_versions\n"
+				+ "WHERE\n" + "id = " + id;
+		try
+		{
+			list = this.jdbcTemplate.query(sql,
+					new BeanPropertyRowMapper<Version>(Version.class));
 		} catch (DataAccessException e)
 		{
 			logger.error(e.getMessage());
