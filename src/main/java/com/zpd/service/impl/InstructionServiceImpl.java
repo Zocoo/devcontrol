@@ -213,6 +213,37 @@ public class InstructionServiceImpl implements IInstructionService, ErrorCode
 							}
 						}
 					}
+				} else if (json.getString("operation").equals("开关")) // TODO
+				{
+					if (json.getJSONArray("sn") != null)
+					{
+						JSONArray ja = json.getJSONArray("sn");
+						String ssid = json.getString("ssid");
+						if (ja != null && ssid != null)
+						{
+							int unixTime = Time.toUnixTime(Time.now());
+							for (int i = 0; i < ja.size(); i++)
+							{
+								Instruction ins = new Instruction();
+								ins.setEsn(ja.getString(i));
+								ins.setType(2);
+								ins.setSsid(ssid);
+								ins.setCreatedat(unixTime);
+								ins.setUpdatedat(unixTime);
+								ins.setEnable(false);
+								ins.setResult(false);
+								ins.setNum(0);
+								try
+								{
+									result = this.instructionDao.save(ins);
+								} catch (Exception e)
+								{
+									System.out.println("插入数据错误：" + i + "<===>"
+											+ ja.getString(i));
+								}
+							}
+						}
+					}
 				}
 		}
 		return result > 0 ? SUCCESS : FAILED;

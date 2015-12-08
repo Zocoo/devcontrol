@@ -79,6 +79,10 @@ public class MyJob implements Job
 			System.out.println("3----------------------->" + unixTime);
 		}
 		sn = sn + ")";
-		deviceInfoDao.updateNetStat(sn);
+		if (!sn.equals("('heartbeat')"))
+		{
+			deviceInfoDao.updateNetStat(sn);
+		}
+		jedis.close();
 	}
 }

@@ -41,8 +41,10 @@ public class Quartz
 		// job 1将每隔20秒执行一次
 		JobDetail job = newJob(MyJob.class).withIdentity("job1", "group1")
 				.build();
+		// CronTrigger trigger = newTrigger().withIdentity("trigger1", "group1")
+		// .withSchedule(cronSchedule("0 0/1 * * * ?")).build();
 		CronTrigger trigger = newTrigger().withIdentity("trigger1", "group1")
-				.withSchedule(cronSchedule("0 0/1 * * * ?")).build();
+				.withSchedule(cronSchedule("0/5 * * * * ?")).build();
 		Date ft = sched.scheduleJob(job, trigger);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss SSS");
 		System.out.println(job.getKey() + " 已被安排执行于: " + sdf.format(ft)
