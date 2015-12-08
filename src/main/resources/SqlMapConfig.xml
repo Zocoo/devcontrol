@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMapConfig      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+
+<sqlMapConfig>
+	<!-- Configure a built-in transaction manager. If you're using an app server, 
+		you probably want to use its transaction manager and a managed datasource -->
+	<transactionManager type="JDBC">
+		<dataSource type="SIMPLE">
+			<property name="JDBC.Driver" value="com.mysql.jdbc.Driver" />
+			<property name="JDBC.ConnectionURL"
+				value="jdbc:mysql://192.168.100.100:3306/oms?useUnicode=true&amp;characterEncoding=utf-8" />
+			<property name="JDBC.Username" value="devoms" />
+			<property name="JDBC.Password" value="oms_123456" />
+		</dataSource>
+	</transactionManager>
+
+	<!-- List the SQL Map XML files. They can be loaded from the classpath, 
+		as they are here (com.scujcc.model...) -->
+	<sqlMap resource="DeviceInfo.xml" />
+</sqlMapConfig>

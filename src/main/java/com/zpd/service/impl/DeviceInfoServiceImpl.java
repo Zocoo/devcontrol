@@ -84,8 +84,7 @@ public class DeviceInfoServiceImpl implements IDeviceInfoService, ErrorCode
 	@Override
 	public int update(DeviceInfo t)
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		return this.deviceInfoDao.update(t);
 	}
 
 	/*
@@ -258,5 +257,11 @@ public class DeviceInfoServiceImpl implements IDeviceInfoService, ErrorCode
 	public DeviceInfo getDeviceByEsn(String esn)
 	{
 		return this.deviceInfoDao.getDeviceByEsn(esn);
+	}
+
+	@Override
+	public void updateNetStat(String sn)
+	{
+		this.deviceInfoDao.updateNetStat(sn);
 	}
 }

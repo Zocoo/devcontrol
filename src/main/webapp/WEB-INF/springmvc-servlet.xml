@@ -30,5 +30,7 @@
 		<property name="suffix" value=".jsp"></property>
 	</bean>
 
-	<!-- <bean class="com.dfrc.listener.InitialConfigListener"> </bean> -->
+	<bean class="com.zpd.listener.InitialConfigListener">
+		<property name="deviceInfoDao" ref="deviceInfoDao"/>
+	</bean>
 </beans>

@@ -19,22 +19,32 @@ package com.zpd.pojo;
 public class Data
 {
 	private String	gw_id;
-	private Integer	transaction_id;
+	private String	transaction_id;
 	private String	method;
 	private String	type;
 	private Integer	code;
 	private String	message;
 	private Object	valueSet;
-	private String	opreation;
+	private String	operation;
 
-	public String getOpreation()
+	public String getTransaction_id()
 	{
-		return opreation;
+		return transaction_id;
 	}
 
-	public void setOpreation(String opreation)
+	public void setTransaction_id(String transaction_id)
 	{
-		this.opreation = opreation;
+		this.transaction_id = transaction_id;
+	}
+
+	public String getOperation()
+	{
+		return operation;
+	}
+
+	public void setOperation(String operation)
+	{
+		this.operation = operation;
 	}
 
 	public String getGw_id()
@@ -45,16 +55,6 @@ public class Data
 	public void setGw_id(String gw_id)
 	{
 		this.gw_id = gw_id;
-	}
-
-	public Integer getTransaction_id()
-	{
-		return transaction_id;
-	}
-
-	public void setTransaction_id(Integer transaction_id)
-	{
-		this.transaction_id = transaction_id;
 	}
 
 	public String getMethod()

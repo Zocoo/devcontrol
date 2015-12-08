@@ -20,8 +20,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.zpd.json.JsonMessage;
 import com.zpd.pojo.Data;
 import com.zpd.pojo.DeviceInfo;
+import com.zpd.pojo.DeviceStatus;
 import com.zpd.pojo.Instruction;
-import com.zpd.pojo.Message;
+import com.zpd.pojo.wrap.DevOnline;
 import com.zpd.pojo.wrap.ImageUpgrade;
 import com.zpd.pojo.wrap.SsidName;
 import com.zpd.service.IDeviceInfoService;
@@ -63,8 +64,7 @@ public class ManageController implements ErrorCode
 	 */
 	@RequestMapping("/register")
 	public String register(ModelMap model,
-			@RequestBody(required = true) String data, String sign)
-					throws IOException
+			@RequestBody(required = true) String data) throws IOException
 	{
 		JSONObject json = null;
 		DeviceInfo di = null;
@@ -79,12 +79,51 @@ public class ManageController implements ErrorCode
 					di = new DeviceInfo();
 					di = this.deviceInfoService
 							.getDeviceByEsn(json.getString("gw_id"));
+					String name = "heartbeat";
+					if (!StringUtils.isEmpty(json.getString("gw_id")))
+						name = name + json.getString("gw_id");
+					DeviceStatus ds = RedisClient.get(name, DeviceStatus.class);
+					RedisClient.del(name);
+					if (ds == null)
+						ds = new DeviceStatus();
+					JSONObject jb = null;
+					jb = json.getJSONObject("valueSet");
+					if (jb != null)
+					{
+						int unixTime = Time.toUnixTime(Time.now());
+						ds.setOnline(true);
+						ds.setPingtime(unixTime);
+						if (!StringUtils.isEmpty(json.getString(("gw_id"))))
+							ds.setEsn(json.getString("gw_id"));
+						if (!StringUtils.isEmpty(jb.getString("gw_mac")))
+							ds.setGwmac(jb.getString("gw_mac"));
+						if (!StringUtils.isEmpty(jb.getString("ssid")))
+							ds.setSsid(jb.getString("ssid"));
+						if (!StringUtils.isEmpty(jb.getString("gw_address")))
+							ds.setGwaddress(jb.getString("gw_address"));
+						if (!StringUtils.isEmpty(jb.getString("router_vendor")))
+							ds.setRoutervendor(jb.getString("router_vendor"));
+						if (!StringUtils.isEmpty(jb.getString("router_type")))
+							ds.setRoutertype(jb.getString("router_type"));
+						if (!StringUtils.isEmpty(jb.getString("wan_ip")))
+							ds.setWanip(jb.getString("wan_ip"));
+						if (!StringUtils.isEmpty(jb.getString("sv")))
+							ds.setSv(jb.getString("sv"));
+						if (jb.getInteger("check_time") != null)
+							ds.setChecktime(jb.getInteger("check_time"));
+						if (ds != null)
+							if (!StringUtils.isEmpty(ds.getEsn()))
+								RedisClient.set(name, ds);
+					}
 				}
 		}
 		if (di != null)
+		{
 			code = SUCCESS;
+			di.setNetState(1);// 在线
+			this.deviceInfoService.update(di);
+		}
 		Data da = new Data();
-		Message msg = new Message();
 		da.setCode(code);
 		if (code == SUCCESS)
 			da.setMessage("success");
@@ -92,10 +131,11 @@ public class ManageController implements ErrorCode
 			da.setMessage("failed");
 		da.setGw_id(json.getString("gw_id"));
 		da.setMethod("system");
-		da.setOpreation("register");
+		da.setOperation("register");
 		da.setType("REQUEST");
 		String jsonString = JSON.toJSONString(da);
-		msg.setData(jsonString);
+		if (jsonString == null || jsonString.length() == 0)
+			jsonString = "出现未知错误，估计是参数错误。";
 		String jsonData = JsonMessage.getJsonMsg(MD5Msg.Md5(jsonString));
 		model.addAttribute("data", jsonData);
 		return Const.VIEW_JSON;
@@ -112,46 +152,81 @@ public class ManageController implements ErrorCode
 		Data da = null;
 		JSONObject json = null;
 		System.out.println("====>" + data);
-		Message msg = new Message();
+		int unixTime = Time.toUnixTime(Time.now());
 		if (data != null)
 		{
 			json = JSON.parseObject(data);
 			if (json != null)
 			{
-				if (json.getString("gw_id") != null)
+				JSONObject jo = new JSONObject();
+				jo = json.getJSONObject("valueSet");
+				if (jo != null)
+				{
+					String name = "heartbeat";
+					if (!StringUtils.isEmpty(json.getString("gw_id")))
+					{
+						name = name + json.getString("gw_id");
+						DeviceInfo di = this.deviceInfoService
+								.getDeviceByEsn(json.getString("gw_id"));
+						if (di != null)
+						{
+							if (di.getNetState().equals(2))
+							{
+								di.setNetState(1);
+								this.deviceInfoService.update(di);
+							}
+						}
+					}
+					DeviceStatus ds = RedisClient.get(name, DeviceStatus.class);
+					RedisClient.del(name);
+					if (ds == null)
+						ds = new DeviceStatus();
+					ds.setOnline(true);
+					ds.setPingtime(unixTime);
+					if (jo.getInteger("client_count") != null)
+						ds.setClientcount(jo.getInteger("client_count"));
+					if (!StringUtils.isEmpty(json.getString("gw_id")))
+						ds.setEsn(json.getString("gw_id"));
+					if (jo.getInteger("sys_load") != null)
+						ds.setSysload(jo.getInteger("sys_load"));
+					if (jo.getInteger("sys_memfree") != null)
+						ds.setSysmemfree(jo.getInteger("sys_memfree"));
+					if (jo.getInteger("sys_uptime") != null)
+						ds.setSysuptime(jo.getInteger("sys_uptime"));
+					if (jo.getInteger("up_time") != null)
+						ds.setUptime(jo.getInteger("up_time"));
+					if (ds != null)
+						RedisClient.set(name, ds);
+				}
+				if (!StringUtils.isEmpty(json.getString("gw_id")))
 				{
 					Instruction ins = this.instructionService
 							.queryInsByEsn(json.getString("gw_id"));
 					if (ins != null)
-					{
 						if (ins.getNum() != null)
 						{
 							ins.setNum(ins.getNum() + 1);
 							this.instructionService.update(ins);
 						}
-					}
 					da = new Data();
 					da.setGw_id(json.getString("gw_id"));
 					da.setType("REQUEST");
 					if (ins == null)
 					{
-						da.setOpreation("closeConn");
+						da.setOperation("closeConn");
 						da.setCode(0);
 						da.setMessage("success");
 					} else
 					{
-						boolean reusltCache = RedisClient.set("wuyize", ins);
-						System.out.println(
-								"==>" + reusltCache + "===>" + ins.getId());
-						da.setTransaction_id(ins.getId());
-						// 0重启，1升级，2修改ssid，3配置设备
+						// 0重启，1升级，2修改ssid，3配置设备，4路由器开，5路由器关
+						da.setTransaction_id(String.valueOf(ins.getId()));
 						if (ins.getType().equals(0))
 						{
-							da.setOpreation("restart");
+							da.setOperation("restart");
 							da.setMethod("system");
 						} else if (ins.getType().equals(1))
 						{
-							da.setOpreation("imageUpgrade");
+							da.setOperation("imageUpgrade");
 							da.setMethod("system");
 							ImageUpgrade valueSet = new ImageUpgrade();
 							if (!StringUtils.isEmpty(ins.getUrl()))
@@ -159,10 +234,9 @@ public class ManageController implements ErrorCode
 							if (!StringUtils.isEmpty(ins.getVer()))
 								valueSet.setVer(ins.getVer());
 							da.setValueSet(valueSet);
-						}
-						if (ins.getType().equals(2))
+						} else if (ins.getType().equals(2))
 						{
-							da.setOpreation("setWirelessInfo");
+							da.setOperation("setWirelessInfo");
 							da.setMethod("wireless");
 							SsidName ssid = new SsidName();
 							if (!StringUtils.isEmpty(ins.getSsid()))
@@ -172,8 +246,34 @@ public class ManageController implements ErrorCode
 												+ ins.getSsid());
 							}
 							if (ssid != null)
-							{
 								da.setValueSet(ssid);
+						} else if (ins.getType().equals(4)) // 关闭
+						{
+							da.setOperation("setWirelessInfo");
+							da.setMethod("wireless");
+							DevOnline enabled = null;
+							if (!StringUtils.isEmpty(ins.getSsid()))
+							{
+								enabled = new DevOnline();
+								enabled.setEnabled(0);
+							}
+							if (enabled != null)
+							{
+								da.setValueSet(enabled);
+							}
+						} else if (ins.getType().equals(5)) // 开启
+						{
+							da.setOperation("setWirelessInfo");
+							da.setMethod("wireless");
+							DevOnline enabled = null;
+							if (!StringUtils.isEmpty(ins.getSsid()))
+							{
+								enabled = new DevOnline();
+								enabled.setEnabled(1);
+							}
+							if (enabled != null)
+							{
+								da.setValueSet(enabled);
 							}
 						}
 					}
@@ -181,7 +281,8 @@ public class ManageController implements ErrorCode
 				}
 			}
 		}
-		msg.setData(data);
+		if (jsonString == null || jsonString.length() == 0)
+			jsonString = "出现未知错误，估计是参数错误。";
 		String jsonData = JsonMessage.getJsonMsg(MD5Msg.Md5(jsonString));
 		model.addAttribute("data", jsonData);
 		return Const.VIEW_JSON;
@@ -194,18 +295,10 @@ public class ManageController implements ErrorCode
 	public String result(ModelMap model,
 			@RequestBody(required = true) String data) throws IOException
 	{
-		RedisClient.del("wuyize");
-		Instruction wuyize = RedisClient.get("wuyize", Instruction.class);
-		if (wuyize != null)
-		{
-			System.out.println("从缓存中获取的对象，" + wuyize.getId());
-		}
-
 		String jsonString = "";
 		Data da = null;
 		JSONObject json = null;
 		System.out.println("====>" + data);
-		Message msg = new Message();
 		int unixTime = Time.toUnixTime(Time.now());
 		if (data != null)
 		{
@@ -214,74 +307,108 @@ public class ManageController implements ErrorCode
 			{
 				Instruction reins = this.instructionService
 						.get(json.getInteger("transaction_id"));
-				reins.setEnable(true);
-				reins.setUpdatedat(unixTime);
-				if (json.getInteger("code").equals(0))
-					reins.setResult(false);
-				else
-					reins.setResult(true);
-				this.instructionService.update(reins);
-				if (json.getString("gw_id") != null)
+				if (reins != null)
 				{
-					Instruction ins = this.instructionService
-							.queryInsByEsn(json.getString("gw_id"));
-					if (ins != null)
+					reins.setEnable(true);
+					reins.setUpdatedat(unixTime);
+					if (json.getInteger("code") != null)
 					{
-						if (ins.getNum() != null)
-						{
-							ins.setNum(ins.getNum() + 1);
-							this.instructionService.update(ins);
-						}
+						if (json.getInteger("code").equals(0))
+							reins.setResult(false);
+						else
+							reins.setResult(true);
+						this.instructionService.update(reins);
 					}
-					da = new Data();
-					da.setGw_id(json.getString("gw_id"));
-					da.setType("REQUEST");
-					if (ins == null)
+					if (!StringUtils.isEmpty(json.getString("gw_id")))
 					{
-						da.setOpreation("closeConn");
-						da.setCode(0);
-						da.setMessage("success");
-					} else
-					{
-						da.setTransaction_id(ins.getId());
-						// 0重启，1升级，2修改ssid，3配置设备
-						if (ins.getType().equals(0))
+						Instruction ins = this.instructionService
+								.queryInsByEsn(json.getString("gw_id"));
+						if (ins != null)
 						{
-							da.setOpreation("restart");
-							da.setMethod("system");
-						} else if (ins.getType().equals(1))
-						{
-							da.setOpreation("imageUpgrade");
-							da.setMethod("system");
-							ImageUpgrade valueSet = new ImageUpgrade();
-							if (!StringUtils.isEmpty(ins.getUrl()))
-								valueSet.setUrl(ins.getUrl());
-							if (!StringUtils.isEmpty(ins.getVer()))
-								valueSet.setVer(ins.getVer());
-							da.setValueSet(valueSet);
-						}
-						if (ins.getType().equals(2))
-						{
-							da.setOpreation("setWirelessInfo");
-							da.setMethod("wireless");
-							SsidName ssid = new SsidName();
-							if (!StringUtils.isEmpty(ins.getSsid()))
+							if (ins.getNum() != null)
 							{
-								ssid.setSsid(
-										"uci set wireless.@wifi-iface[0].ssid="
-												+ ins.getSsid());
-							}
-							if (ssid != null)
-							{
-								da.setValueSet(ssid);
+								ins.setNum(ins.getNum() + 1);
+								this.instructionService.update(ins);
 							}
 						}
+						da = new Data();
+						da.setGw_id(json.getString("gw_id"));
+						da.setType("REQUEST");
+						if (ins == null)
+						{
+							da.setOperation("closeConn");
+							da.setCode(0);
+							da.setMessage("success");
+						} else
+						{
+							da.setTransaction_id(String.valueOf(ins.getId()));
+							// 0重启，1升级，2修改ssid，3配置设备，4路由器开，5路由器关
+							if (ins.getType().equals(0))
+							{
+								da.setOperation("restart");
+								da.setMethod("system");
+							} else if (ins.getType().equals(1))
+							{
+								da.setOperation("imageUpgrade");
+								da.setMethod("system");
+								ImageUpgrade valueSet = new ImageUpgrade();
+								if (!StringUtils.isEmpty(ins.getUrl()))
+									valueSet.setUrl(ins.getUrl());
+								if (!StringUtils.isEmpty(ins.getVer()))
+									valueSet.setVer(ins.getVer());
+								da.setValueSet(valueSet);
+							} else if (ins.getType().equals(2))
+							{
+								da.setOperation("setWirelessInfo");
+								da.setMethod("wireless");
+								SsidName ssid = new SsidName();
+								if (!StringUtils.isEmpty(ins.getSsid()))
+								{
+									ssid.setSsid(
+											"uci set wireless.@wifi-iface[0].ssid="
+													+ ins.getSsid());
+								}
+								if (ssid != null)
+								{
+									da.setValueSet(ssid);
+								}
+							} else if (ins.getType().equals(4)) // 关闭
+							{
+								da.setOperation("setWirelessInfo");
+								da.setMethod("wireless");
+								DevOnline enabled = null;
+								if (!StringUtils.isEmpty(ins.getSsid()))
+								{
+									enabled = new DevOnline();
+									enabled.setEnabled(0);
+								}
+								if (enabled != null)
+								{
+									da.setValueSet(enabled);
+								}
+							} else if (ins.getType().equals(5)) // 开启
+							{
+								da.setOperation("setWirelessInfo");
+								da.setMethod("wireless");
+								DevOnline enabled = null;
+								if (!StringUtils.isEmpty(ins.getSsid()))
+								{
+									enabled = new DevOnline();
+									enabled.setEnabled(1);
+								}
+								if (enabled != null)
+								{
+									da.setValueSet(enabled);
+								}
+							}
+						}
+						jsonString = JSON.toJSONString(da);
 					}
-					jsonString = JSON.toJSONString(da);
 				}
 			}
 		}
-		msg.setData(data);
+		if (jsonString == null || jsonString.length() == 0)
+			jsonString = "出现未知错误，估计是参数错误。";
 		String jsonData = JsonMessage.getJsonMsg(MD5Msg.Md5(jsonString));
 		model.addAttribute("data", jsonData);
 		return Const.VIEW_JSON;

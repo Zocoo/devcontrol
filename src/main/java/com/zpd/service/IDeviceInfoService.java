@@ -55,7 +55,12 @@ public interface IDeviceInfoService extends IBaseService<DeviceInfo>
 	 * 
 	 * @param esn
 	 *            设备esn
-	 * @return 设备信息 
+	 * @return 设备信息
 	 */
 	DeviceInfo getDeviceByEsn(String esn);
+
+	/**
+	 * 批量更新设备状态
+	 */
+	void updateNetStat(String sn);
 }

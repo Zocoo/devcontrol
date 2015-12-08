@@ -23,6 +23,11 @@ import com.zpd.pojo.Vendor;
 public interface IDeviceInfoDao extends IBaseDao<DeviceInfo>
 {
 	/**
+	 * 批量更新设备状态
+	 */
+	void updateNetStat(String sn);
+
+	/**
 	 * 通过sn查询设备集合
 	 * 
 	 * @param sn

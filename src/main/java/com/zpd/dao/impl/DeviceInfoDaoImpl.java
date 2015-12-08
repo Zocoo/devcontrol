@@ -284,4 +284,18 @@ public class DeviceInfoDaoImpl implements IDeviceInfoDao
 		return (list != null && list.size() == 1) ? list.get(0) : null;
 	}
 
+	@Override
+	public void updateNetStat(String sn)
+	{
+		String sql = "update device_details set net_state=2 where esn in " + sn;
+		SqlParameterSource sps = new MapSqlParameterSource("esn", sn);
+		try
+		{
+			this.jdbcTemplate.update(sql, sps);
+		} catch (DataAccessException e)
+		{
+			logger.error(e.getMessage());
+		}
+	}
+
 }

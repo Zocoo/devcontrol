@@ -181,4 +181,10 @@ public class RedisClient
 		}
 	}
 
+	public static Jedis getJedis()
+	{
+		Jedis jedis = null;
+		jedis = jedisPool.getResource();
+		return jedis;
+	}
 }
