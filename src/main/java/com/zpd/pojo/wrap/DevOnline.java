@@ -18,15 +18,16 @@ package com.zpd.pojo.wrap;
  */
 public class DevOnline
 {
-	private Integer enabled;
+	private Integer disabled;
 
-	public Integer getEnabled()
+	public Integer getDisabled()
 	{
-		return enabled;
+		return disabled;
 	}
 
-	public void setEnabled(Integer enabled)
+	public void setDisabled(Integer disabled)
 	{
-		this.enabled = enabled;
+		this.disabled = disabled;
 	}
+
 }

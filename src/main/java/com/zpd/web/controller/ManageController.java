@@ -76,52 +76,56 @@ public class ManageController implements ErrorCode
 			if (json != null)
 				if (json.getString("gw_id") != null)
 				{
-					di = new DeviceInfo();
 					di = this.deviceInfoService
 							.getDeviceByEsn(json.getString("gw_id"));
 					String name = "heartbeat";
 					if (!StringUtils.isEmpty(json.getString("gw_id")))
 						name = name + json.getString("gw_id");
-					DeviceStatus ds = RedisClient.get(name, DeviceStatus.class);
-					RedisClient.del(name);
-					if (ds == null)
-						ds = new DeviceStatus();
-					JSONObject jb = null;
-					jb = json.getJSONObject("valueSet");
-					if (jb != null)
+					if (di != null)
 					{
-						int unixTime = Time.toUnixTime(Time.now());
-						ds.setOnline(true);
-						ds.setPingtime(unixTime);
-						if (!StringUtils.isEmpty(json.getString(("gw_id"))))
-							ds.setEsn(json.getString("gw_id"));
-						if (!StringUtils.isEmpty(jb.getString("gw_mac")))
-							ds.setGwmac(jb.getString("gw_mac"));
-						if (!StringUtils.isEmpty(jb.getString("ssid")))
-							ds.setSsid(jb.getString("ssid"));
-						if (!StringUtils.isEmpty(jb.getString("gw_address")))
-							ds.setGwaddress(jb.getString("gw_address"));
-						if (!StringUtils.isEmpty(jb.getString("router_vendor")))
-							ds.setRoutervendor(jb.getString("router_vendor"));
-						if (!StringUtils.isEmpty(jb.getString("router_type")))
-							ds.setRoutertype(jb.getString("router_type"));
-						if (!StringUtils.isEmpty(jb.getString("wan_ip")))
-							ds.setWanip(jb.getString("wan_ip"));
-						if (!StringUtils.isEmpty(jb.getString("sv")))
-							ds.setSv(jb.getString("sv"));
-						if (jb.getInteger("check_time") != null)
-							ds.setChecktime(jb.getInteger("check_time"));
-						if (ds != null)
-							if (!StringUtils.isEmpty(ds.getEsn()))
-								RedisClient.set(name, ds);
+						code = SUCCESS;
+						di.setNetState(1);// 在线
+						this.deviceInfoService.update(di);
+						DeviceStatus ds = RedisClient.get(name,
+								DeviceStatus.class);
+						RedisClient.del(name);
+						if (ds == null)
+							ds = new DeviceStatus();
+						JSONObject jb = null;
+						jb = json.getJSONObject("valueSet");
+						if (jb != null)
+						{
+							int unixTime = Time.toUnixTime(Time.now());
+							ds.setOnline(true);
+							ds.setPingtime(unixTime);
+							if (!StringUtils.isEmpty(json.getString(("gw_id"))))
+								ds.setEsn(json.getString("gw_id"));
+							if (!StringUtils.isEmpty(jb.getString("gw_mac")))
+								ds.setGwmac(jb.getString("gw_mac"));
+							if (!StringUtils.isEmpty(jb.getString("ssid")))
+								ds.setSsid(jb.getString("ssid"));
+							if (!StringUtils
+									.isEmpty(jb.getString("gw_address")))
+								ds.setGwaddress(jb.getString("gw_address"));
+							if (!StringUtils
+									.isEmpty(jb.getString("router_vendor")))
+								ds.setRoutervendor(
+										jb.getString("router_vendor"));
+							if (!StringUtils
+									.isEmpty(jb.getString("router_type")))
+								ds.setRoutertype(jb.getString("router_type"));
+							if (!StringUtils.isEmpty(jb.getString("wan_ip")))
+								ds.setWanip(jb.getString("wan_ip"));
+							if (!StringUtils.isEmpty(jb.getString("sv")))
+								ds.setSv(jb.getString("sv"));
+							if (jb.getInteger("check_time") != null)
+								ds.setChecktime(jb.getInteger("check_time"));
+							if (ds != null)
+								if (!StringUtils.isEmpty(ds.getEsn()))
+									RedisClient.set(name, ds);
+						}
 					}
 				}
-		}
-		if (di != null)
-		{
-			code = SUCCESS;
-			di.setNetState(1);// 在线
-			this.deviceInfoService.update(di);
 		}
 		Data da = new Data();
 		da.setCode(code);
@@ -170,6 +174,28 @@ public class ManageController implements ErrorCode
 								.getDeviceByEsn(json.getString("gw_id"));
 						if (di != null)
 						{
+							DeviceStatus ds = RedisClient.get(name,
+									DeviceStatus.class);
+							RedisClient.del(name);
+							if (ds == null)
+								ds = new DeviceStatus();
+							ds.setOnline(true);
+							ds.setPingtime(unixTime);
+							if (jo.getInteger("client_count") != null)
+								ds.setClientcount(
+										jo.getInteger("client_count"));
+							if (!StringUtils.isEmpty(json.getString("gw_id")))
+								ds.setEsn(json.getString("gw_id"));
+							if (jo.getInteger("sys_load") != null)
+								ds.setSysload(jo.getInteger("sys_load"));
+							if (jo.getInteger("sys_memfree") != null)
+								ds.setSysmemfree(jo.getInteger("sys_memfree"));
+							if (jo.getInteger("sys_uptime") != null)
+								ds.setSysuptime(jo.getInteger("sys_uptime"));
+							if (jo.getInteger("up_time") != null)
+								ds.setUptime(jo.getInteger("up_time"));
+							if (ds != null)
+								RedisClient.set(name, ds);
 							if (di.getNetState().equals(2))
 							{
 								di.setNetState(1);
@@ -177,26 +203,6 @@ public class ManageController implements ErrorCode
 							}
 						}
 					}
-					DeviceStatus ds = RedisClient.get(name, DeviceStatus.class);
-					RedisClient.del(name);
-					if (ds == null)
-						ds = new DeviceStatus();
-					ds.setOnline(true);
-					ds.setPingtime(unixTime);
-					if (jo.getInteger("client_count") != null)
-						ds.setClientcount(jo.getInteger("client_count"));
-					if (!StringUtils.isEmpty(json.getString("gw_id")))
-						ds.setEsn(json.getString("gw_id"));
-					if (jo.getInteger("sys_load") != null)
-						ds.setSysload(jo.getInteger("sys_load"));
-					if (jo.getInteger("sys_memfree") != null)
-						ds.setSysmemfree(jo.getInteger("sys_memfree"));
-					if (jo.getInteger("sys_uptime") != null)
-						ds.setSysuptime(jo.getInteger("sys_uptime"));
-					if (jo.getInteger("up_time") != null)
-						ds.setUptime(jo.getInteger("up_time"));
-					if (ds != null)
-						RedisClient.set(name, ds);
 				}
 				if (!StringUtils.isEmpty(json.getString("gw_id")))
 				{
@@ -218,7 +224,7 @@ public class ManageController implements ErrorCode
 						da.setMessage("success");
 					} else
 					{
-						// 0重启，1升级，2修改ssid，3配置设备，4路由器开，5路由器关
+						// 0重启，1升级，2修改ssid，3配置设备，4路由器关，5路由器开
 						da.setTransaction_id(String.valueOf(ins.getId()));
 						if (ins.getType().equals(0))
 						{
@@ -241,9 +247,10 @@ public class ManageController implements ErrorCode
 							SsidName ssid = new SsidName();
 							if (!StringUtils.isEmpty(ins.getSsid()))
 							{
-								ssid.setSsid(
-										"uci set wireless.@wifi-iface[0].ssid="
-												+ ins.getSsid());
+								// ssid.setSsid(
+								// "uci set wireless.@wifi-iface[0].ssid="
+								// + ins.getSsid());
+								ssid.setSsid(ins.getSsid());
 							}
 							if (ssid != null)
 								da.setValueSet(ssid);
@@ -251,29 +258,23 @@ public class ManageController implements ErrorCode
 						{
 							da.setOperation("setWirelessInfo");
 							da.setMethod("wireless");
-							DevOnline enabled = null;
-							if (!StringUtils.isEmpty(ins.getSsid()))
+							DevOnline disabled = null;
+							disabled = new DevOnline();
+							disabled.setDisabled(1);
+							if (disabled != null)
 							{
-								enabled = new DevOnline();
-								enabled.setEnabled(0);
-							}
-							if (enabled != null)
-							{
-								da.setValueSet(enabled);
+								da.setValueSet(disabled);
 							}
 						} else if (ins.getType().equals(5)) // 开启
 						{
 							da.setOperation("setWirelessInfo");
 							da.setMethod("wireless");
-							DevOnline enabled = null;
-							if (!StringUtils.isEmpty(ins.getSsid()))
+							DevOnline disabled = null;
+							disabled = new DevOnline();
+							disabled.setDisabled(0);
+							if (disabled != null)
 							{
-								enabled = new DevOnline();
-								enabled.setEnabled(1);
-							}
-							if (enabled != null)
-							{
-								da.setValueSet(enabled);
+								da.setValueSet(disabled);
 							}
 						}
 					}
@@ -314,9 +315,9 @@ public class ManageController implements ErrorCode
 					if (json.getInteger("code") != null)
 					{
 						if (json.getInteger("code").equals(0))
-							reins.setResult(false);
-						else
 							reins.setResult(true);
+						else
+							reins.setResult(false);
 						this.instructionService.update(reins);
 					}
 					if (!StringUtils.isEmpty(json.getString("gw_id")))
@@ -342,7 +343,7 @@ public class ManageController implements ErrorCode
 						} else
 						{
 							da.setTransaction_id(String.valueOf(ins.getId()));
-							// 0重启，1升级，2修改ssid，3配置设备，4路由器开，5路由器关
+							// 0重启，1升级，2修改ssid，3配置设备，4路由器关，5路由器开
 							if (ins.getType().equals(0))
 							{
 								da.setOperation("restart");
@@ -364,9 +365,10 @@ public class ManageController implements ErrorCode
 								SsidName ssid = new SsidName();
 								if (!StringUtils.isEmpty(ins.getSsid()))
 								{
-									ssid.setSsid(
-											"uci set wireless.@wifi-iface[0].ssid="
-													+ ins.getSsid());
+									// ssid.setSsid(
+									// "uci set wireless.@wifi-iface[0].ssid="
+									// + ins.getSsid());
+									ssid.setSsid(ins.getSsid());
 								}
 								if (ssid != null)
 								{
@@ -376,29 +378,23 @@ public class ManageController implements ErrorCode
 							{
 								da.setOperation("setWirelessInfo");
 								da.setMethod("wireless");
-								DevOnline enabled = null;
-								if (!StringUtils.isEmpty(ins.getSsid()))
+								DevOnline disabled = null;
+								disabled = new DevOnline();
+								disabled.setDisabled(1);
+								if (disabled != null)
 								{
-									enabled = new DevOnline();
-									enabled.setEnabled(0);
-								}
-								if (enabled != null)
-								{
-									da.setValueSet(enabled);
+									da.setValueSet(disabled);
 								}
 							} else if (ins.getType().equals(5)) // 开启
 							{
 								da.setOperation("setWirelessInfo");
 								da.setMethod("wireless");
-								DevOnline enabled = null;
-								if (!StringUtils.isEmpty(ins.getSsid()))
+								DevOnline disabled = null;
+								disabled = new DevOnline();
+								disabled.setDisabled(0);
+								if (disabled != null)
 								{
-									enabled = new DevOnline();
-									enabled.setEnabled(1);
-								}
-								if (enabled != null)
-								{
-									da.setValueSet(enabled);
+									da.setValueSet(disabled);
 								}
 							}
 						}

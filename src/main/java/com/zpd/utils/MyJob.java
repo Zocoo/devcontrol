@@ -18,11 +18,10 @@ import org.quartz.JobExecutionException;
 import com.zpd.dao.IDeviceInfoDao;
 import com.zpd.pojo.DeviceStatus;
 
-import redis.clients.jedis.Jedis;
-
 public class MyJob implements Job
 {
-	private static IDeviceInfoDao deviceInfoDao;
+	private static IDeviceInfoDao	deviceInfoDao;
+	private static Integer			dtime	= 0;
 
 	public static void setDeviceInfoDao(IDeviceInfoDao deviceInfoDao)
 	{
@@ -40,8 +39,8 @@ public class MyJob implements Job
 	public void execute(JobExecutionContext arg0) throws JobExecutionException
 	{
 		int unixTime = Time.toUnixTime(Time.now());
-		Jedis jedis = RedisClient.getJedis();
-		Set<String> keys = jedis.keys("heartbeat*");
+		System.out.println("3----------------------->" + unixTime);
+		Set<String> keys = RedisClient.jedis.keys("heartbeat*");
 		Iterator<String> it = keys.iterator();
 		String sn = "('heartbeat'";
 		while (it.hasNext())
@@ -49,40 +48,62 @@ public class MyJob implements Job
 			String key = it.next();
 			DeviceStatus ds = new DeviceStatus();
 			ds = RedisClient.get(key, DeviceStatus.class);
-			if (ds.isOnline())
+			// if (ds.isOnline())
+			// {
+			boolean c = false;
+			if (ds != null)
 			{
-				if (ds.getPingtime() != null)
-					if (unixTime - ds.getPingtime() > 120)
-					{
-						ds.setOnline(false);
-						RedisClient.del(key);
-						RedisClient.set(key, ds);
-						if (ds != null)
+				if (ds.isOnline() || unixTime - dtime > 420)
+				{
+					c = true;
+					dtime = unixTime;
+				}
+				if (ds != null && c)
+					if (ds.getPingtime() != null)
+						if (unixTime - ds.getPingtime() > 150)
 						{
-							if (!StringUtils.isEmpty(ds.getEsn()))
+							ds.setOnline(false);
+							RedisClient.del(key);
+							RedisClient.set(key, ds);
+							if (ds != null)
 							{
-								sn = sn + ",'" + ds.getEsn() + "'";
-								// try
-								// {
-								// .update("updateDevice", sn);
-								// } catch (SQLException e)
-								// {
-								// // TODO Auto-generated catch block
-								// e.printStackTrace();
-								// }
+								if (!StringUtils.isEmpty(ds.getEsn()))
+								{
+									sn = sn + ",'" + ds.getEsn() + "'";
+									// try
+									// {
+									// .update("updateDevice", sn);
+									// } catch (SQLException e)
+									// {
+									// // TODO Auto-generated catch block
+									// e.printStackTrace();
+									// }
+								}
 							}
 						}
-					}
 			}
+			// }
 			System.out.println("1----------------------->" + key);
 			System.out.println("2----------------------->" + ds.getPingtime());
-			System.out.println("3----------------------->" + unixTime);
 		}
 		sn = sn + ")";
 		if (!sn.equals("('heartbeat')"))
 		{
 			deviceInfoDao.updateNetStat(sn);
 		}
-		jedis.close();
+	}
+
+	public static void main(String[] args)
+	{
+		Set<String> keys = RedisClient.jedis.keys("*");
+		Iterator<String> it = keys.iterator();
+		while (it.hasNext())
+		{
+			String key = it.next();
+			// RedisClient.del(key);
+			DeviceStatus ds = new DeviceStatus();
+			ds = RedisClient.get(key, DeviceStatus.class);
+			System.out.println("===>" + ds.getEsn() + "---" + ds.getPingtime());
+		}
 	}
 }

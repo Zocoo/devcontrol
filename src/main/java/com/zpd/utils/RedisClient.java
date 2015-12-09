@@ -27,7 +27,8 @@ import redis.clients.jedis.JedisPoolConfig;
 public class RedisClient
 {
 
-	public static JedisPool jedisPool; // 池化管理jedis链接池
+	public static JedisPool	jedisPool;	// 池化管理jedis链接池
+	public static Jedis		jedis;
 
 	static
 	{
@@ -53,6 +54,7 @@ public class RedisClient
 		config.setMaxWaitMillis(maxWait);
 		// 初始化连接池
 		jedisPool = new JedisPool(host, port);
+		jedis = jedisPool.getResource();
 	}
 
 	/**
@@ -179,12 +181,5 @@ public class RedisClient
 		{
 			jedisPool.returnResource(jedis);
 		}
-	}
-
-	public static Jedis getJedis()
-	{
-		Jedis jedis = null;
-		jedis = jedisPool.getResource();
-		return jedis;
 	}
 }

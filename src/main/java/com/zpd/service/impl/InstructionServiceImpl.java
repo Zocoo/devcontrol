@@ -107,144 +107,171 @@ public class InstructionServiceImpl implements IInstructionService, ErrorCode
 		JSONObject json = null;
 		if (str != null)
 		{
-			json = JSON.parseObject(str);
+			try
+			{
+				json = JSON.parseObject(str);
+			} catch (Exception e)
+			{
+				json = null;
+			}
 			if (json != null)
-				if (json.getString("operation").equals("restart"))
-				{
-					if (json.getJSONArray("sn") != null)
+				if (json.getString("operation") != null)
+					if (json.getString("operation").equals("restart"))
 					{
-						JSONArray ja = json.getJSONArray("sn");
-						if (ja != null)
+						if (json.getJSONArray("sn") != null)
 						{
-							int unixTime = Time.toUnixTime(Time.now());
-							for (int i = 0; i < ja.size(); i++)
+							JSONArray ja = json.getJSONArray("sn");
+							if (ja != null)
 							{
-								Instruction ins = new Instruction();
-								ins.setEsn(ja.getString(i));
-								ins.setType(0);
-								ins.setCreatedat(unixTime);
-								ins.setUpdatedat(unixTime);
-								ins.setEnable(false);
-								ins.setResult(false);
-								ins.setNum(0);
-								try
+								int unixTime = Time.toUnixTime(Time.now());
+								for (int i = 0; i < ja.size(); i++)
 								{
-									result = this.instructionDao.save(ins);
-								} catch (Exception e)
-								{
-									System.out.println("插入数据错误：" + i + "<===>"
-											+ ja.getString(i));
-								}
-							}
-						}
-					}
-				} else if (json.getString("operation").equals("imageUpgrade"))
-				{
-					if (json.getJSONArray("sn") != null)
-					{
-						JSONArray ja = json.getJSONArray("sn");
-						if (ja != null)
-						{
-							int unixTime = Time.toUnixTime(Time.now());
-							for (int i = 0; i < ja.size(); i++)
-							{
-								Instruction ins = new Instruction();
-								ins.setEsn(ja.getString(i));
-								ins.setType(1);
-								Version version = new Version();
-								if (json.getInteger("version") != null)
-								{
-									version = this.instructionDao.queryVersion(
-											json.getInteger("version"));
-									if (version != null)
+									Instruction ins = new Instruction();
+									ins.setEsn(ja.getString(i));
+									ins.setType(0);
+									ins.setCreatedat(unixTime);
+									ins.setUpdatedat(unixTime);
+									ins.setEnable(false);
+									ins.setResult(false);
+									ins.setNum(0);
+									try
 									{
-										if (!StringUtils
-												.isEmpty(version.getUrl()))
-											ins.setUrl(version.getUrl());
-										if (!StringUtils
-												.isEmpty(version.getVersion()))
-											ins.setVer(version.getVersion());
+										result = this.instructionDao.save(ins);
+									} catch (Exception e)
+									{
+										System.out.println("插入数据错误：" + i
+												+ "<===>" + ja.getString(i));
 									}
 								}
-								ins.setCreatedat(unixTime);
-								ins.setUpdatedat(unixTime);
-								ins.setEnable(false);
-								ins.setResult(false);
-								ins.setNum(0);
-								try
-								{
-									result = this.instructionDao.save(ins);
-								} catch (Exception e)
-								{
-									System.out.println("插入数据错误：" + i + "<===>"
-											+ ja.getString(i));
-								}
 							}
 						}
-					}
-				} else if (json.getString("operation").equals("setSsid"))
-				{
-					if (json.getJSONArray("sn") != null)
+					} else
+						if (json.getString("operation").equals("imageUpgrade"))
 					{
-						JSONArray ja = json.getJSONArray("sn");
-						String ssid = json.getString("ssid");
-						if (ja != null && ssid != null)
+						if (json.getJSONArray("sn") != null)
 						{
-							int unixTime = Time.toUnixTime(Time.now());
-							for (int i = 0; i < ja.size(); i++)
+							JSONArray ja = json.getJSONArray("sn");
+							if (ja != null)
 							{
-								Instruction ins = new Instruction();
-								ins.setEsn(ja.getString(i));
-								ins.setType(2);
-								ins.setSsid(ssid);
-								ins.setCreatedat(unixTime);
-								ins.setUpdatedat(unixTime);
-								ins.setEnable(false);
-								ins.setResult(false);
-								ins.setNum(0);
-								try
+								int unixTime = Time.toUnixTime(Time.now());
+								for (int i = 0; i < ja.size(); i++)
 								{
-									result = this.instructionDao.save(ins);
-								} catch (Exception e)
-								{
-									System.out.println("插入数据错误：" + i + "<===>"
-											+ ja.getString(i));
+									Instruction ins = new Instruction();
+									ins.setEsn(ja.getString(i));
+									ins.setType(1);
+									Version version = new Version();
+									if (json.getInteger("version") != null)
+									{
+										version = this.instructionDao
+												.queryVersion(json
+														.getInteger("version"));
+										if (version != null)
+										{
+											if (!StringUtils
+													.isEmpty(version.getUrl()))
+												ins.setUrl(version.getUrl());
+											if (!StringUtils.isEmpty(
+													version.getVersion()))
+												ins.setVer(
+														version.getVersion());
+										}
+									}
+									ins.setCreatedat(unixTime);
+									ins.setUpdatedat(unixTime);
+									ins.setEnable(false);
+									ins.setResult(false);
+									ins.setNum(0);
+									try
+									{
+										result = this.instructionDao.save(ins);
+									} catch (Exception e)
+									{
+										System.out.println("插入数据错误：" + i
+												+ "<===>" + ja.getString(i));
+									}
 								}
 							}
 						}
-					}
-				} else if (json.getString("operation").equals("开关")) // TODO
-				{
-					if (json.getJSONArray("sn") != null)
+					} else if (json.getString("operation").equals("setSsid"))
 					{
-						JSONArray ja = json.getJSONArray("sn");
-						String ssid = json.getString("ssid");
-						if (ja != null && ssid != null)
+						if (json.getJSONArray("sn") != null)
 						{
-							int unixTime = Time.toUnixTime(Time.now());
-							for (int i = 0; i < ja.size(); i++)
+							JSONArray ja = json.getJSONArray("sn");
+							String ssid = json.getString("ssid");
+							if (ja != null && ssid != null)
 							{
-								Instruction ins = new Instruction();
-								ins.setEsn(ja.getString(i));
-								ins.setType(2);
-								ins.setSsid(ssid);
-								ins.setCreatedat(unixTime);
-								ins.setUpdatedat(unixTime);
-								ins.setEnable(false);
-								ins.setResult(false);
-								ins.setNum(0);
-								try
+								int unixTime = Time.toUnixTime(Time.now());
+								for (int i = 0; i < ja.size(); i++)
 								{
-									result = this.instructionDao.save(ins);
-								} catch (Exception e)
+									Instruction ins = new Instruction();
+									ins.setEsn(ja.getString(i));
+									ins.setType(2);
+									ins.setSsid(ssid);
+									ins.setCreatedat(unixTime);
+									ins.setUpdatedat(unixTime);
+									ins.setEnable(false);
+									ins.setResult(false);
+									ins.setNum(0);
+									try
+									{
+										result = this.instructionDao.save(ins);
+									} catch (Exception e)
+									{
+										System.out.println("插入数据错误：" + i
+												+ "<===>" + ja.getString(i));
+									}
+								}
+							}
+						}
+					} else if (json.getString("operation").equals("switchSsid"))
+					{
+						if (json.getJSONArray("sn") != null)
+						{
+							JSONArray ja = json.getJSONArray("sn");
+							if (ja != null)
+							{
+								int unixTime = Time.toUnixTime(Time.now());
+								for (int i = 0; i < ja.size(); i++)
 								{
-									System.out.println("插入数据错误：" + i + "<===>"
-											+ ja.getString(i));
+									Instruction ins = new Instruction();
+									ins.setEsn(ja.getString(i));
+									boolean c = false;
+									if (json.getInteger("disabled") != null)
+									{
+										if (json.getInteger("disabled")
+												.equals(0))
+										{
+											c = true;
+											ins.setType(4);
+										} else if (json.getInteger("disabled")
+												.equals(1))
+										{
+											c = true;
+											ins.setType(5);
+										}
+										if (c)
+										{
+											ins.setCreatedat(unixTime);
+											ins.setUpdatedat(unixTime);
+											ins.setEnable(false);
+											ins.setResult(false);
+											ins.setNum(0);
+											try
+											{
+												result = this.instructionDao
+														.save(ins);
+											} catch (Exception e)
+											{
+												System.out.println("插入数据错误：" + i
+														+ "<===>"
+														+ ja.getString(i));
+											}
+										}
+									}
 								}
 							}
 						}
 					}
-				}
 		}
 		return result > 0 ? SUCCESS : FAILED;
 	}
