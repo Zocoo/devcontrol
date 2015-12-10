@@ -7,48 +7,38 @@
  */
 package com.zpd.utils;
 
-import static org.quartz.CronScheduleBuilder.cronSchedule;
-import static org.quartz.JobBuilder.newJob;
-import static org.quartz.TriggerBuilder.newTrigger;
-
-/**
- * TODO
- * @author wuyize
- * 
- * @version v1.0.0
- * @date 2015年12月8日
- *
- */
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import org.quartz.CronTrigger;
-import org.quartz.JobDetail;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerFactory;
-import org.quartz.impl.StdSchedulerFactory;
-
 public class Quartz
 {
+
 	public void go() throws Exception
 	{
-		// 首先，必需要取得一个Scheduler的引用
-		SchedulerFactory sf = new StdSchedulerFactory();
-		Scheduler sched = sf.getScheduler();
-		// jobs可以在scheduled的sched.start()方法前被调用
-
-		JobDetail job = newJob(MyJob.class).withIdentity("job1", "group1")
-				.build();
-		CronTrigger trigger = newTrigger().withIdentity("trigger1", "group1")
-				.withSchedule(cronSchedule("0 0/2 * * * ?")).build();
+		// // 首先，必需要取得一个Scheduler的引用
+		// SchedulerFactory sf = new StdSchedulerFactory();
+		// Scheduler sched = sf.getScheduler();
+		// // jobs可以在scheduled的sched.start()方法前被调用
+		//
+		// JobDetail job = newJob(MyJob.class).withIdentity("job1", "group1")
+		// .build();
+		//
+		// // CronTrigger trigger = newTrigger().withIdentity("trigger1",
+		// "group1")
+		// // .withSchedule(cronSchedule("0 0/3 * * * ?")).build();
 		// CronTrigger trigger = newTrigger().withIdentity("trigger1", "group1")
 		// .withSchedule(cronSchedule("0/10 * * * * ?")).build();
-		Date ft = sched.scheduleJob(job, trigger);
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss SSS");
-		System.out.println(job.getKey() + " 已被安排执行于: " + sdf.format(ft)
-				+ "，并且以如下重复规则重复执行: " + trigger.getCronExpression());
-		sched.start();
+		// Date ft = sched.scheduleJob(job, trigger);
+		// SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss
+		// SSS");
+		// System.out.println(job.getKey() + " 已被安排执行于: " + sdf.format(ft)
+		// + "，并且以如下重复规则重复执行: " + trigger.getCronExpression());
+		// sched.start();
+		// int unixTime = Time.toUnixTime(Time.now());
+		// if (unixTime - code > 160)
+		// {
+		// code = unixTime;
+		// } else
+		// {
+		// sched.shutdown(true);
+		// }
 	}
 
 	// public static void main(String[] args) throws Exception

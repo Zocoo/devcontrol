@@ -63,9 +63,11 @@ public class AcceptController implements ErrorCode
 
 	/**
 	 * 接受上层发过来控制设备的请求
+	 * 
+	 * @throws Exception
 	 */
 	@RequestMapping("/count")
-	public String queryCount(ModelMap model, String sn) throws IOException
+	public String queryCount(ModelMap model, String sn) throws Exception
 	{
 		MsgData msg = null;
 		int code = FAILED;

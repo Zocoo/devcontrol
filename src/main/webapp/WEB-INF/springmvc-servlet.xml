@@ -31,6 +31,31 @@
 	</bean>
 
 	<bean class="com.zpd.listener.InitialConfigListener">
-		<property name="deviceInfoDao" ref="deviceInfoDao"/>
+		<property name="deviceInfoDao" ref="deviceInfoDao" />
+	</bean>
+	<!-- 定时器 -->
+	<!-- 配置需要定时的bean类 -->
+	<bean id="myJob" class="com.zpd.utils.MyJob">
+	</bean>
+	<!-- 配置任务的具体类和方法 -->
+	<bean id="startWorkTask"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="myJob"></property>
+		<property name="targetMethod" value="startWork"></property>
+		<property name="concurrent" value="false"></property>
+	</bean>
+	<!-- 配置一个触发器 -->
+	<bean id="startWorkTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="startWorkTask"></property>
+		<property name="cronExpression" value="0/5 * * * * ?"></property>
+	</bean>
+	<!-- 总调度,用于启动定时器 -->
+	<bean id="schedulerFactory"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="startWorkTrigger" />
+			</list>
+		</property>
 	</bean>
 </beans>

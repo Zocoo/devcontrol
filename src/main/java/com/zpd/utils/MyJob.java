@@ -11,14 +11,12 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import com.zpd.dao.IDeviceInfoDao;
 import com.zpd.pojo.DeviceStatus;
 
-public class MyJob implements Job
+public class MyJob
 {
 	private static IDeviceInfoDao	deviceInfoDao;
 	private static Integer			dtime	= 0;
@@ -35,8 +33,7 @@ public class MyJob implements Job
 	// sqlmap = smu.getInstance();
 	// }
 
-	@Override
-	public void execute(JobExecutionContext arg0) throws JobExecutionException
+	public void startWork() throws JobExecutionException
 	{
 		int unixTime = Time.toUnixTime(Time.now());
 		System.out.println("3----------------------->" + unixTime);
@@ -60,7 +57,7 @@ public class MyJob implements Job
 				}
 				if (ds != null && c)
 					if (ds.getPingtime() != null)
-						if (unixTime - ds.getPingtime() > 150)
+						if (unixTime - ds.getPingtime() > 181)
 						{
 							ds.setOnline(false);
 							RedisClient.del(key);
