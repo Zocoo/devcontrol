@@ -30,7 +30,7 @@ heartbeat
 register
 {
     "transaction_id": "2423534645",
-    "gw_id": "456789",
+    "gw_id": "2A:C6:8E:B6:67:2F",
     "type": "REQUEST",
     "operation": "register",
     "valueSet": {

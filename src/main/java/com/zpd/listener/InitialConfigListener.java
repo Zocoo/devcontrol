@@ -13,7 +13,6 @@ import org.springframework.web.context.ServletContextAware;
 
 import com.zpd.dao.IDeviceInfoDao;
 import com.zpd.utils.MyJob;
-import com.zpd.utils.Quartz;
 
 /**
  * 初始化上下文配置
@@ -24,8 +23,8 @@ import com.zpd.utils.Quartz;
  */
 public class InitialConfigListener implements ServletContextAware
 {
-	private  IDeviceInfoDao deviceInfoDao;
-	
+	private IDeviceInfoDao deviceInfoDao;
+
 	public void setDeviceInfoDao(IDeviceInfoDao deviceInfoDao)
 	{
 		this.deviceInfoDao = deviceInfoDao;
@@ -37,7 +36,7 @@ public class InitialConfigListener implements ServletContextAware
 		try
 		{
 			MyJob.setDeviceInfoDao(deviceInfoDao);
-			Quartz.chackOnline();
+			// Quartz.chackOnline();
 		} catch (Exception e)
 		{
 			// TODO Auto-generated catch block

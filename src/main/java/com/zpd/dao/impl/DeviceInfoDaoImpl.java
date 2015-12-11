@@ -77,7 +77,7 @@ public class DeviceInfoDaoImpl implements IDeviceInfoDao
 	public int update(DeviceInfo t)
 	{
 		int result = -1;
-		String sql = "update device_details set `order_id`=:orderId,`device_category_id`=:deviceCategoryId,`device_type_id`=:deviceTypeId,\n"
+		String sql = "update device_details set `ssid`=:ssid,`order_id`=:orderId,`device_category_id`=:deviceCategoryId,`device_type_id`=:deviceTypeId,\n"
 				+ "`unique_code`=:uniqueCode,`sno`=:sno,`enable`=:enable,`esn`=:esn,`created_at`=:createdAt,`updated_at`=:updatedAt,\n"
 				+ "`mac`=:mac,`status`=:status,`type`=:type,`open_at`=:openAt,`close_at`=:closeAt,`main`=:main,`scene_id`=:sceneId,\n"
 				+ "`net_state`=:netState,`wlan_ip`=:wlanIp,`version`=:version WHERE `id`=:id";

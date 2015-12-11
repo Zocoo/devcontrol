@@ -10,6 +10,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 
 import com.zpd.dao.IVerdorDao;
 import com.zpd.pojo.Vendor;
@@ -20,7 +22,8 @@ import com.zpd.utils.Paginate;
  * @author Administrator
  *
  */
-public class VendorDaoImpl implements IVerdorDao {
+public class VendorDaoImpl implements IVerdorDao
+{
 	private final static Logger logger = LogFactory
 			.getLogger(VendorDaoImpl.class);
 
@@ -31,70 +34,85 @@ public class VendorDaoImpl implements IVerdorDao {
 	 * 
 	 * @param jdbcTemplate
 	 */
-	public void setJdbcTemplate(NamedParameterJdbcTemplate jdbcTemplate) {
+	public void setJdbcTemplate(NamedParameterJdbcTemplate jdbcTemplate)
+	{
 		this.jdbcTemplate = jdbcTemplate;
 	}
 
 	@Override
-	public int save(Vendor t) {
+	public int save(Vendor t)
+	{
 		int result = -1;
 		String sql = "INSERT INTO vendors (\n" + "	name,\n" + "	intro,\n"
 				+ "	created_at,\n" + "	updated_at,\n" + "	`enable`\n" + ")\n"
-				+ "VALUES\n" + "	(\n" + "		:name,\n" + "		:intro,\n"
-				+ "		:createdAt,\n" + "		:updatedAt,\n" + "		:enable\n" + "	)";
+				+ "VALUES\n" + "	(\n" + "		:name,\n"
+				+ "		:intro,\n" + "		:createdAt,\n"
+				+ "		:updatedAt,\n" + "		:enable\n" + "	)";
 		SqlParameterSource sps = new BeanPropertySqlParameterSource(t);
-		try {
-			result = this.jdbcTemplate.update(sql, sps);
-		} catch (DataAccessException e) {
+		KeyHolder key = new GeneratedKeyHolder();
+		try
+		{
+			result = this.jdbcTemplate.update(sql, sps, key);
+			t.setId(key.getKey().intValue());
+		} catch (DataAccessException e)
+		{
 			logger.error(e.getMessage());
 		}
 		return result;
 	}
 
 	@Override
-	public int delete(int id) {
+	public int delete(int id)
+	{
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public int update(Vendor t) {
+	public int update(Vendor t)
+	{
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public Vendor get(int id) {
+	public Vendor get(int id)
+	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public long getCount() {
+	public long getCount()
+	{
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public long getCount(int key, int value) {
+	public long getCount(int key, int value)
+	{
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public List<Vendor> initTop(int limit) {
+	public List<Vendor> initTop(int limit)
+	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<Vendor> paginate(Paginate pag) {
+	public List<Vendor> paginate(Paginate pag)
+	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<Vendor> paginate(int key, int value, Paginate pag) {
+	public List<Vendor> paginate(int key, int value, Paginate pag)
+	{
 		// TODO Auto-generated method stub
 		return null;
 	}

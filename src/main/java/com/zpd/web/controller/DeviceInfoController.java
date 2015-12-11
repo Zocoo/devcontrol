@@ -29,8 +29,7 @@ import com.zpd.utils.SignUtil;
 /**
  * 设备信息控制器
  * 
- * @author Jacky
- * @version v1.0.0
+ * @author Jacky @version v1.0.0
  * @date 2015年11月20日
  * 
  */
@@ -38,7 +37,7 @@ import com.zpd.utils.SignUtil;
 @RequestMapping("/device")
 public class DeviceInfoController
 {
-	private IDeviceInfoService	deviceInfoService;
+	private IDeviceInfoService deviceInfoService;
 
 	public void setDeviceInfoService(IDeviceInfoService deviceInfoService)
 	{
@@ -49,8 +48,8 @@ public class DeviceInfoController
 	 * 接收mp方发送的最新设备信息
 	 */
 	@RequestMapping("/rcv")
-	public String receiveDi(ModelMap model, @RequestBody(required = true)
-	String data, String sign)
+	public String receiveDi(ModelMap model,
+			@RequestBody(required = true) String data, String sign)
 	{
 		int code = ErrorCode.FAILED;
 		if (SignUtil.checkSignature(sign, data))
@@ -63,13 +62,13 @@ public class DeviceInfoController
 						DeviceMsg.class);
 				for (DeviceMsg deviceMsg : list)
 				{
-					if (!StringUtils.isEmpty(deviceMsg.getSn()))
+					DeviceInfo di = this.deviceInfoService
+							.getDeviceByEsn(deviceMsg.getEsn());
+					if (di != null && !StringUtils.isEmpty(deviceMsg.getEsn()))
 					{
-						DeviceInfo olddeviceInfo = this.deviceInfoService
-								.getDeviceInfoBySn(deviceMsg.getSn());
-						if (olddeviceInfo != null)
-							code = this.deviceInfoService.updateFromMp(
-									olddeviceInfo, deviceMsg);
+
+						code = this.deviceInfoService.updateFromMp(di,
+								deviceMsg);
 					}
 				}
 			}

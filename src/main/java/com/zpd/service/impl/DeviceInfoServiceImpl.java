@@ -191,7 +191,7 @@ public class DeviceInfoServiceImpl implements IDeviceInfoService, ErrorCode
 			if (!StringUtils.isEmpty(dm.getModel()))
 			{
 				DeviceType dt = null;
-				dt = this.deviceInfoDao.getDeviceTypeByName(dm.getModel());
+				dt = this.deviceInfoDao.getDeviceTypeByName(dm.getModel());// 查看是否有这个型号
 				if (dt == null)
 				{
 					dt = new DeviceType();
@@ -223,7 +223,7 @@ public class DeviceInfoServiceImpl implements IDeviceInfoService, ErrorCode
 					dt = this.deviceTypeDao.get(di.getDeviceTypeId());
 					if (dt != null)
 					{
-						vd = this.deviceInfoDao.getVendorByName(dm.getVendor());
+						vd = this.deviceInfoDao.getVendorByName(dm.getVendor());// 查看是否有这个厂商
 						if (vd == null)
 						{
 							vd = new Vendor();
@@ -244,10 +244,15 @@ public class DeviceInfoServiceImpl implements IDeviceInfoService, ErrorCode
 					}
 				}
 			}
-			if (dm.getStatus() != null)
-				di.setNetState(dm.getStatus());
+			di.setNetState(1);// 路由器在线
 			if (!StringUtils.isEmpty(dm.getFireware()))
 				di.setVersion(dm.getFireware());
+			if (!StringUtils.isEmpty(dm.getMac()))
+				di.setMac(dm.getMac());
+			if (!StringUtils.isEmpty(dm.getWlanip()))
+				di.setWlanIp(dm.getWlanip());
+			if (!StringUtils.isEmpty(dm.getSsid()))
+				di.setSsid(dm.getSsid());
 			code = this.deviceInfoDao.update(di);
 		}
 		return code > 0 ? SUCCESS : FAILED;

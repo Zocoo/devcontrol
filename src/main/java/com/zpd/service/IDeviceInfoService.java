@@ -42,13 +42,11 @@ public interface IDeviceInfoService extends IBaseService<DeviceInfo>
 	/**
 	 * 通过迈普提交的数据更新设备信息
 	 * 
-	 * @param di
-	 *            原来设备的信息
 	 * @param dm
 	 *            现在设备的信息
 	 * @return 是否成功
 	 */
-	int updateFromMp(DeviceInfo di, DeviceMsg dm);
+	int updateFromMp(DeviceInfo di,DeviceMsg dm);
 
 	/**
 	 * 通过ESN查询设备信息

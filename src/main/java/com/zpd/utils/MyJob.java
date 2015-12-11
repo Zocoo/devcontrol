@@ -16,10 +16,18 @@ import org.quartz.JobExecutionException;
 import com.zpd.dao.IDeviceInfoDao;
 import com.zpd.pojo.DeviceStatus;
 
+import redis.clients.jedis.Jedis;
+
 public class MyJob
 {
 	private static IDeviceInfoDao	deviceInfoDao;
 	private static Integer			dtime	= 0;
+	private static Jedis			jedis	= null;
+
+	static
+	{
+		jedis = RedisClient.getJedis();
+	}
 
 	public static void setDeviceInfoDao(IDeviceInfoDao deviceInfoDao)
 	{
@@ -37,7 +45,7 @@ public class MyJob
 	{
 		int unixTime = Time.toUnixTime(Time.now());
 		System.out.println("3----------------------->" + unixTime);
-		Set<String> keys = RedisClient.jedis.keys("heartbeat*");
+		Set<String> keys = jedis.keys("heartbeat*");
 		Iterator<String> it = keys.iterator();
 		String sn = "('heartbeat'";
 		while (it.hasNext())
@@ -50,15 +58,16 @@ public class MyJob
 			boolean c = false;
 			if (ds != null)
 			{
-				if (ds.isOnline() || unixTime - dtime > 420)
+				if (ds.isOnline() || unixTime - dtime > 3000)
 				{
 					c = true;
 					dtime = unixTime;
 				}
 				if (ds != null && c)
 					if (ds.getPingtime() != null)
-						if (unixTime - ds.getPingtime() > 181)
+						if (unixTime - ds.getPingtime() > 240)
 						{
+							ds.setClientcount(0);
 							ds.setOnline(false);
 							RedisClient.del(key);
 							RedisClient.set(key, ds);
@@ -81,7 +90,9 @@ public class MyJob
 			}
 			// }
 			System.out.println("1----------------------->" + key);
-			System.out.println("2----------------------->" + ds.getPingtime());
+			System.out.println("2----------------------->" + ds.getPingtime()
+					+ "===" + ds.isOnline() + "==="
+					+ (unixTime - ds.getPingtime()));
 		}
 		sn = sn + ")";
 		if (!sn.equals("('heartbeat')"))
@@ -92,7 +103,7 @@ public class MyJob
 
 	public static void main(String[] args)
 	{
-		Set<String> keys = RedisClient.jedis.keys("*");
+		Set<String> keys = jedis.keys("*");
 		Iterator<String> it = keys.iterator();
 		while (it.hasNext())
 		{
