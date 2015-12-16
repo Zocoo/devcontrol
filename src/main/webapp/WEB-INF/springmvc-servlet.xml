@@ -47,7 +47,7 @@
 	<!-- 配置一个触发器 -->
 	<bean id="startWorkTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 		<property name="jobDetail" ref="startWorkTask"></property>
-		<property name="cronExpression" value="0 0/3 * * * ?"></property>
+		<property name="cronExpression" value="0 0/1 * * * ?"></property>
 	</bean>
 	<!-- 总调度,用于启动定时器 -->
 	<bean id="schedulerFactory"

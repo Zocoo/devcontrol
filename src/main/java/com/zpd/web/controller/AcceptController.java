@@ -81,7 +81,10 @@ public class AcceptController implements ErrorCode
 				code = SUCCESS;
 				System.out.println("====>" + sn);
 				cs = new Conns();
-				cs.setConns(ins.getClientcount());
+				if (ins.getClientcount() != null)
+					cs.setConns(ins.getClientcount());
+				else
+					cs.setConns(0);
 			}
 			msg = new MsgData(code);
 			if (cs != null)
