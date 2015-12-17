@@ -18,6 +18,7 @@
 	</bean>
 	<bean id="deviceInfoService" class="com.zpd.service.impl.DeviceInfoServiceImpl">
 		<property name="deviceTypeDao" ref="deviceTypeDao" />
+		<property name="deviceCategoriesDao" ref="deviceCategoriesDao" />
 		<property name="deviceInfoDao" ref="deviceInfoDao" />
 		<property name="vendorDao" ref="vendorDao" />
 	</bean>

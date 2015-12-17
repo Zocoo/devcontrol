@@ -61,7 +61,7 @@ public interface IDeviceInfoDao extends IBaseDao<DeviceInfo>
 	 *            设备名称
 	 * @return DeviceType
 	 */
-	DeviceType getDeviceTypeByName(String name);
+	DeviceType getDeviceTypeByName(String name,Integer cid);
 
 	/**
 	 * 插入DeviceType

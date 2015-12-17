@@ -77,7 +77,7 @@ public class DeviceInfoDaoImpl implements IDeviceInfoDao
 	public int update(DeviceInfo t)
 	{
 		int result = -1;
-		String sql = "update device_details set `ssid`=:ssid,`order_id`=:orderId,`device_category_id`=:deviceCategoryId,`device_type_id`=:deviceTypeId,\n"
+		String sql = "update device_details set `vendor_id`=:vendorId, `ssid`=:ssid,`order_id`=:orderId,`device_category_id`=:deviceCategoryId,`device_type_id`=:deviceTypeId,\n"
 				+ "`unique_code`=:uniqueCode,`sno`=:sno,`enable`=:enable,`esn`=:esn,`created_at`=:createdAt,`updated_at`=:updatedAt,\n"
 				+ "`mac`=:mac,`status`=:status,`type`=:type,`open_at`=:openAt,`close_at`=:closeAt,`main`=:main,`scene_id`=:sceneId,\n"
 				+ "`net_state`=:netState,`wlan_ip`=:wlanIp,`version`=:version WHERE `id`=:id";
@@ -208,11 +208,12 @@ public class DeviceInfoDaoImpl implements IDeviceInfoDao
 	}
 
 	@Override
-	public DeviceType getDeviceTypeByName(String name)
+	public DeviceType getDeviceTypeByName(String name, Integer cid)
 	{
 		List<DeviceType> list = null;
 		String sql = "SELECT\n" + "	*\n" + "FROM\n" + "	device_types\n"
-				+ "WHERE\n" + "	ENABLE = 1\n" + "AND name =:name ";
+				+ "WHERE\n" + "	ENABLE = 1\n"
+				+ "AND name =:name and device_category_id=" + cid;
 		SqlParameterSource sps = new MapSqlParameterSource("name", name);
 		try
 		{

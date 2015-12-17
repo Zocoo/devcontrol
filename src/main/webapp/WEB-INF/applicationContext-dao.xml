@@ -33,4 +33,7 @@
 	<bean id="deviceFirmwareVersionLogsDao" class="com.zpd.dao.impl.DeviceFirmwareVersionLogsDaoImpl">
 		<property name="jdbcTemplate" ref="jdbcTemplate" />
 	</bean>
+	<bean id="deviceCategoriesDao" class="com.zpd.dao.impl.DeviceCategoriesDaoImpl">
+		<property name="jdbcTemplate" ref="jdbcTemplate" />
+	</bean>
 </beans>

@@ -19,47 +19,59 @@ import java.io.Serializable;
 public class DeviceInfo implements Serializable
 {
 
-	private String				ssid;
+	private String	ssid;
 	// 订单设备详细信息ID
-	private Integer				id;
+	private Integer	id;
 	// 订单ID
-	private Integer				orderId;
+	private Integer	orderId;
 	// 设备分类ID
-	private Integer				deviceCategoryId;
+	private Integer	deviceCategoryId;
 	// 设备型号ID
-	private Integer				deviceTypeId;
+	private Integer	deviceTypeId;
 	// 设备唯一标识码
-	private String				uniqueCode;
+	private String	uniqueCode;
 	// 设备序列号
-	private String				sno;
+	private String	sno;
 	// 设备ESN码
-	private String				esn;
-	private String				mac;
-	private Integer				status;
+	private String	esn;
+	private String	mac;
+	private Integer	status;
 	// 设备类型,正常安装或者更换设备
-	private Integer				type;
-	private Integer				openAt;
-	private Integer				closeAt;
+	private Integer	type;
+	private Integer	openAt;
+	private Integer	closeAt;
 	// 是否是主要设备
-	private Boolean				main;
-	private Integer				sceneId;
-	private Integer				netState;
-	private String				wlanIp;
+	private Boolean	main;
+	private Integer	sceneId;
+	private Integer	netState;
+	private String	wlanIp;
 	// 固件版本
-	private String				version;
-	private String				apkVersion;
-	private String				apkServerVersion;
-	private String				monitorSno;
-	private Integer				monitorStatus;
+	private String	version;
+	private String	apkVersion;
+	private String	apkServerVersion;
+	private String	monitorSno;
+	private Integer	monitorStatus;
 	// 大屏、小屏
-	private Integer				deviceType;
+	private Integer	deviceType;
 	// 修改时间
-	private Integer				updatedAt;
+	private Integer	updatedAt;
 	// 创建时间
-	private Integer				createdAt;
+	private Integer	createdAt;
 	// 是否可用
-	private Boolean				enable;
-	private static final long	serialVersionUID	= 1L;
+	private Boolean	enable;
+	private Integer	vendorId;
+
+	public Integer getVendorId()
+	{
+		return vendorId;
+	}
+
+	public void setVendorId(Integer vendorId)
+	{
+		this.vendorId = vendorId;
+	}
+
+	private static final long serialVersionUID = 1L;
 
 	public String getSsid()
 	{

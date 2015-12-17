@@ -11,9 +11,11 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.zpd.dao.IDeviceCategoriesDao;
 import com.zpd.dao.IDeviceInfoDao;
 import com.zpd.dao.IDeviceTypeDao;
 import com.zpd.dao.IVerdorDao;
+import com.zpd.pojo.DeviceCategories;
 import com.zpd.pojo.DeviceInfo;
 import com.zpd.pojo.DeviceType;
 import com.zpd.pojo.Vendor;
@@ -32,15 +34,20 @@ import com.zpd.utils.Time;
  */
 public class DeviceInfoServiceImpl implements IDeviceInfoService, ErrorCode
 {
-	private IDeviceInfoDao	deviceInfoDao;
-	private IVerdorDao		vendorDao;
+	private IDeviceInfoDao			deviceInfoDao;
+	private IVerdorDao				vendorDao;
+	private IDeviceTypeDao			deviceTypeDao;
+	private IDeviceCategoriesDao	deviceCategoriesDao;
+
+	public void setDeviceCategoriesDao(IDeviceCategoriesDao deviceCategoriesDao)
+	{
+		this.deviceCategoriesDao = deviceCategoriesDao;
+	}
 
 	public void setVendorDao(IVerdorDao vendorDao)
 	{
 		this.vendorDao = vendorDao;
 	}
-
-	private IDeviceTypeDao deviceTypeDao;
 
 	public void setDeviceTypeDao(IDeviceTypeDao deviceTypeDao)
 	{
@@ -188,20 +195,23 @@ public class DeviceInfoServiceImpl implements IDeviceInfoService, ErrorCode
 		if (di != null && dm != null)
 		{
 			int unixTime = Time.toUnixTime(Time.now());
-			if (!StringUtils.isEmpty(dm.getModel()))
+			DeviceCategories dc = this.deviceCategoriesDao.queryDeviceC("路由器");
+			if (!StringUtils.isEmpty(dm.getModel()) && dc != null)
 			{
+				di.setDeviceCategoryId(dc.getId());
 				DeviceType dt = null;
-				dt = this.deviceInfoDao.getDeviceTypeByName(dm.getModel());// 查看是否有这个型号
+				dt = this.deviceInfoDao.getDeviceTypeByName(dm.getModel(),
+						dc.getId());// 查看是否有这个型号
 				if (dt == null)
 				{
 					dt = new DeviceType();
 					dt.setEnable(true);
 					dt.setIntro("");
-					if (di.getDeviceCategoryId() != null
+					if (dc.getId() != null
 							&& !StringUtils.isEmpty((dm.getModel())))
 					{
 						dt.setName(dm.getModel());
-						dt.setDeviceCategoryId(di.getDeviceCategoryId());
+						dt.setDeviceCategoryId(dc.getId());
 						dt.setCreatedAt(unixTime);
 						dt.setUpdatedAt(unixTime);
 						int result = this.deviceTypeDao.save(dt);
@@ -216,32 +226,22 @@ public class DeviceInfoServiceImpl implements IDeviceInfoService, ErrorCode
 			}
 			if (!StringUtils.isEmpty(dm.getVendor()))
 			{
-				Vendor vd = null;
-				DeviceType dt = null;
-				if (di.getDeviceTypeId() != null)
+				Vendor vd = this.deviceInfoDao.getVendorByName(dm.getVendor());// 查看是否有这个厂商
+				if (vd == null)
 				{
-					dt = this.deviceTypeDao.get(di.getDeviceTypeId());
-					if (dt != null)
-					{
-						vd = this.deviceInfoDao.getVendorByName(dm.getVendor());// 查看是否有这个厂商
-						if (vd == null)
-						{
-							vd = new Vendor();
-							vd.setCreatedAt(unixTime);
-							vd.setEnable(true);
-							vd.setUpdatedAt(unixTime);
-							vd.setIntro("无");
-							vd.setName(dm.getVendor());
-							int result = this.vendorDao.save(vd);
-							if (result > 0)
-								if (vd.getId() != null)
-									dt.setVendorId(vd.getId());
-						} else
-						{
-							dt.setVendorId(vd.getId());
-						}
-						this.deviceTypeDao.update(dt);
-					}
+					vd = new Vendor();
+					vd.setCreatedAt(unixTime);
+					vd.setEnable(true);
+					vd.setUpdatedAt(unixTime);
+					vd.setIntro("无");
+					vd.setName(dm.getVendor());
+					int result = this.vendorDao.save(vd);
+					if (result > 0)
+						if (vd.getId() != null)
+							di.setVendorId(vd.getId());
+				} else
+				{
+					di.setVendorId(vd.getId());
 				}
 			}
 			di.setNetState(1);// 路由器在线
