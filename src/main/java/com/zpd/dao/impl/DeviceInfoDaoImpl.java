@@ -177,7 +177,7 @@ public class DeviceInfoDaoImpl implements IDeviceInfoDao
 	{
 		List<DeviceInfo> list = null;
 		String sql = "SELECT\n" + "	*\n" + "FROM\n" + "	device_details\n"
-				+ "WHERE\n" + "	ENABLE = 1\n" + "AND sno =:sn ";
+				+ "WHERE\n" + "	ENABLE = 1\n" + "AND esn =:sn ";
 		SqlParameterSource sps = new MapSqlParameterSource("sn", sn);
 		try
 		{

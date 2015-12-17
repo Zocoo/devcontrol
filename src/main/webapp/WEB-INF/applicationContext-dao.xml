@@ -30,4 +30,7 @@
 	<bean id="instructionDao" class="com.zpd.dao.impl.InstructionDaoImpl">
 		<property name="jdbcTemplate" ref="jdbcTemplate" />
 	</bean>
+	<bean id="deviceFirmwareVersionLogsDao" class="com.zpd.dao.impl.DeviceFirmwareVersionLogsDaoImpl">
+		<property name="jdbcTemplate" ref="jdbcTemplate" />
+	</bean>
 </beans>

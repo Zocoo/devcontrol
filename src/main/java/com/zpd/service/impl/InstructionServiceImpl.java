@@ -14,7 +14,11 @@ import org.apache.commons.lang.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.zpd.dao.IDeviceFirmwareVersionLogsDao;
+import com.zpd.dao.IDeviceInfoDao;
 import com.zpd.dao.IInstructionDao;
+import com.zpd.pojo.DeviceFirmwareVersionLogs;
+import com.zpd.pojo.DeviceInfo;
 import com.zpd.pojo.Instruction;
 import com.zpd.pojo.Version;
 import com.zpd.service.IInstructionService;
@@ -31,7 +35,20 @@ import com.zpd.utils.Time;
  */
 public class InstructionServiceImpl implements IInstructionService, ErrorCode
 {
-	private IInstructionDao instructionDao;
+	private IInstructionDao					instructionDao;
+	private IDeviceFirmwareVersionLogsDao	deviceFirmwareVersionLogsDao;
+	private IDeviceInfoDao					deviceInfoDao;
+
+	public void setDeviceInfoDao(IDeviceInfoDao deviceInfoDao)
+	{
+		this.deviceInfoDao = deviceInfoDao;
+	}
+
+	public void setDeviceFirmwareVersionLogsDao(
+			IDeviceFirmwareVersionLogsDao deviceFirmwareVersionLogsDao)
+	{
+		this.deviceFirmwareVersionLogsDao = deviceFirmwareVersionLogsDao;
+	}
 
 	public void setInstructionDao(IInstructionDao instructionDao)
 	{
@@ -103,7 +120,7 @@ public class InstructionServiceImpl implements IInstructionService, ErrorCode
 	public Integer dealData(String str)
 	{
 		int result = -1;
-
+		int unixTime = Time.toUnixTime(Time.now());
 		JSONObject json = null;
 		if (str != null)
 		{
@@ -123,7 +140,6 @@ public class InstructionServiceImpl implements IInstructionService, ErrorCode
 							JSONArray ja = json.getJSONArray("sn");
 							if (ja != null)
 							{
-								int unixTime = Time.toUnixTime(Time.now());
 								for (int i = 0; i < ja.size(); i++)
 								{
 									Instruction ins = new Instruction();
@@ -153,41 +169,72 @@ public class InstructionServiceImpl implements IInstructionService, ErrorCode
 							JSONArray ja = json.getJSONArray("sn");
 							if (ja != null)
 							{
-								int unixTime = Time.toUnixTime(Time.now());
 								for (int i = 0; i < ja.size(); i++)
 								{
-									Instruction ins = new Instruction();
-									ins.setEsn(ja.getString(i));
-									ins.setType(1);
-									Version version = new Version();
-									if (json.getInteger("version") != null)
+									DeviceFirmwareVersionLogs dfvl = null;
+									DeviceInfo di = this.deviceInfoDao
+											.getDeviceInfoBySn(ja.getString(i));
+									if (di != null)
 									{
-										version = this.instructionDao
-												.queryVersion(json
-														.getInteger("version"));
-										if (version != null)
+										dfvl = new DeviceFirmwareVersionLogs();
+										dfvl.setCreatedAt(unixTime);
+										dfvl.setUpdatedAt(unixTime);
+										dfvl.setEnable(true);
+										dfvl.setRemark("");
+										dfvl.setDeviceId(di.getId());
+										dfvl.setStatus(1);
+										Instruction ins = new Instruction();
+										ins.setEsn(ja.getString(i));
+										ins.setType(1);
+										Version version = new Version();
+										if (json.getInteger("version") != null)
 										{
-											if (!StringUtils
-													.isEmpty(version.getUrl()))
-												ins.setUrl(version.getUrl());
-											if (!StringUtils.isEmpty(
-													version.getVersion()))
-												ins.setVer(
-														version.getVersion());
+											version = this.instructionDao
+													.queryVersion(
+															json.getInteger(
+																	"version"));
+											if (version != null)
+											{
+												if (!StringUtils.isEmpty(
+														version.getUrl()))
+												{
+													dfvl.setUrl(
+															version.getUrl());
+													ins.setUrl(
+															version.getUrl());
+												}
+												if (!StringUtils.isEmpty(
+														version.getVersion()))
+												{
+													dfvl.setVersionPrev(version
+															.getVersion());
+													ins.setVer(version
+															.getVersion());
+												}
+											}
 										}
-									}
-									ins.setCreatedat(unixTime);
-									ins.setUpdatedat(unixTime);
-									ins.setEnable(false);
-									ins.setResult(false);
-									ins.setNum(0);
-									try
-									{
-										result = this.instructionDao.save(ins);
-									} catch (Exception e)
-									{
-										System.out.println("插入数据错误：" + i
-												+ "<===>" + ja.getString(i));
+										ins.setCreatedat(unixTime);
+										ins.setUpdatedat(unixTime);
+										ins.setEnable(false);
+										ins.setResult(false);
+										ins.setNum(0);
+										if (ins.getUrl() != null
+												&& ins.getVer() != null)
+										{
+											try
+											{
+												int result1 = this.deviceFirmwareVersionLogsDao
+														.save(dfvl);
+												if (result1 > 0)
+													result = this.instructionDao
+															.save(ins);
+											} catch (Exception e)
+											{
+												System.out.println("插入数据错误：" + i
+														+ "<===>"
+														+ ja.getString(i));
+											}
+										}
 									}
 								}
 							}
@@ -200,7 +247,6 @@ public class InstructionServiceImpl implements IInstructionService, ErrorCode
 							String ssid = json.getString("ssid");
 							if (ja != null && ssid != null)
 							{
-								int unixTime = Time.toUnixTime(Time.now());
 								for (int i = 0; i < ja.size(); i++)
 								{
 									Instruction ins = new Instruction();
@@ -230,7 +276,6 @@ public class InstructionServiceImpl implements IInstructionService, ErrorCode
 							JSONArray ja = json.getJSONArray("sn");
 							if (ja != null)
 							{
-								int unixTime = Time.toUnixTime(Time.now());
 								for (int i = 0; i < ja.size(); i++)
 								{
 									Instruction ins = new Instruction();

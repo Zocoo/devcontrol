@@ -19,6 +19,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.zpd.json.JsonMessage;
 import com.zpd.pojo.Data;
+import com.zpd.pojo.DeviceFirmwareVersionLogs;
 import com.zpd.pojo.DeviceInfo;
 import com.zpd.pojo.DeviceStatus;
 import com.zpd.pojo.Instruction;
@@ -26,6 +27,7 @@ import com.zpd.pojo.wrap.DevOnline;
 import com.zpd.pojo.wrap.DeviceMsg;
 import com.zpd.pojo.wrap.ImageUpgrade;
 import com.zpd.pojo.wrap.SsidName;
+import com.zpd.service.IDeviceFirmwareVersionLogsService;
 import com.zpd.service.IDeviceInfoService;
 import com.zpd.service.IInstructionService;
 import com.zpd.utils.Const;
@@ -47,8 +49,15 @@ import com.zpd.utils.Time;
 @RequestMapping("/manage")
 public class ManageController implements ErrorCode
 {
-	private IInstructionService	instructionService;
-	private IDeviceInfoService	deviceInfoService;
+	private IInstructionService					instructionService;
+	private IDeviceInfoService					deviceInfoService;
+	private IDeviceFirmwareVersionLogsService	deviceFirmwareVersionLogsService;
+
+	public void setDeviceFirmwareVersionLogsService(
+			IDeviceFirmwareVersionLogsService deviceFirmwareVersionLogsService)
+	{
+		this.deviceFirmwareVersionLogsService = deviceFirmwareVersionLogsService;
+	}
 
 	public void setDeviceInfoService(IDeviceInfoService deviceInfoService)
 	{
@@ -139,6 +148,22 @@ public class ManageController implements ErrorCode
 							{
 								deviceMsg.setFireware(jb.getString("sv"));
 								ds.setSv(jb.getString("sv"));
+								DeviceFirmwareVersionLogs dfvl = this.deviceFirmwareVersionLogsService
+										.querydfvlbydid(di.getId(), 2);
+								if (dfvl != null)
+								{
+									if (jb.getString("sv")
+											.equals(dfvl.getVersionPrev()))
+									{
+										dfvl.setStatus(4);
+									} else
+									{
+										dfvl.setStatus(3);
+									}
+									dfvl.setVersion(jb.getString("sv"));
+									this.deviceFirmwareVersionLogsService
+											.update(dfvl);
+								}
 							}
 							if (jb.getInteger("check_time") != null)
 								ds.setChecktime(jb.getInteger("check_time"));
@@ -334,13 +359,34 @@ public class ManageController implements ErrorCode
 						.get(json.getInteger("transaction_id"));
 				if (reins != null)
 				{
+					if (json.getInteger("code").equals(0))
+					{
+						if (reins.getType().equals(1))
+						{
+							DeviceInfo di = this.deviceInfoService
+									.getDeviceByEsn(reins.getEsn());
+							if (di != null)
+							{
+								DeviceFirmwareVersionLogs dfvl = this.deviceFirmwareVersionLogsService
+										.querydfvlbydid(di.getId(), 1);
+								if (dfvl != null)
+								{
+									dfvl.setUpdatedAt(unixTime);
+									dfvl.setStatus(2);
+									this.deviceFirmwareVersionLogsService
+											.update(dfvl);
+								}
+							}
+						}
+					}
 					reins.setEnable(true);
 					reins.setUpdatedat(unixTime);
 					if (json.getInteger("code") != null)
 					{
 						if (json.getInteger("code").equals(0))
+						{
 							reins.setResult(true);
-						else
+						} else
 							reins.setResult(false);
 						this.instructionService.update(reins);
 					}

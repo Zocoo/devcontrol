@@ -27,6 +27,7 @@
 	<bean name="manageController" class="com.zpd.web.controller.ManageController"
 		scope="prototype">
 		<property name="instructionService" ref="instructionService" />
+		<property name="deviceFirmwareVersionLogsService" ref="deviceFirmwareVersionLogsService" />
 		<property name="deviceInfoService" ref="deviceInfoService" />
 	</bean>
 	<bean name="acceptController" class="com.zpd.web.controller.AcceptController"

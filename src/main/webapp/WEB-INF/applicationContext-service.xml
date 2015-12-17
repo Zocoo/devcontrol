@@ -23,5 +23,11 @@
 	</bean>
 	<bean id="instructionService" class="com.zpd.service.impl.InstructionServiceImpl">
 		<property name="instructionDao" ref="instructionDao" />
+		<property name="deviceInfoDao" ref="deviceInfoDao" />
+		<property name="deviceFirmwareVersionLogsDao" ref="deviceFirmwareVersionLogsDao" />
+	</bean>
+	<bean id="deviceFirmwareVersionLogsService"
+		class="com.zpd.service.impl.DeviceFirmwareVersionLogsServiceImpl">
+		<property name="deviceFirmwareVersionLogsDao" ref="deviceFirmwareVersionLogsDao" />
 	</bean>
 </beans>

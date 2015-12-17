@@ -3,8 +3,8 @@ http://zpdteck.com:8081/doku.php?id=zpd:doc:spec:menu94
 
 result
 {
-    "gw_id": "esn",
-    "transaction_id": "2423534645",
+    "gw_id": "wuyize",
+    "transaction_id": "68",
     "operation": "register",
     "type": "RESPONSE",
     "code": 1,
@@ -64,7 +64,7 @@ imageUpgrade
         "456123"
     ],
     "operation": "imageUpgrade",
-    "version": 2
+    "version": 12
 }
 
 
