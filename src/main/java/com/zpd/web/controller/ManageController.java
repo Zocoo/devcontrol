@@ -79,7 +79,7 @@ public class ManageController implements ErrorCode
 		JSONObject json = null;
 		DeviceInfo di = null;
 		int code = FAILED;
-		System.out.println("====>" + data);
+		System.out.println("register====>" + data);
 		if (data != null)
 		{
 			json = JSON.parseObject(data);
@@ -204,7 +204,7 @@ public class ManageController implements ErrorCode
 		String jsonString = "";
 		Data da = null;
 		JSONObject json = null;
-		System.out.println("====>" + data);
+		System.out.println("heartbeat====>" + data);
 		int unixTime = Time.toUnixTime(Time.now());
 		if (data != null)
 		{
@@ -288,6 +288,10 @@ public class ManageController implements ErrorCode
 								valueSet.setUrl(ins.getUrl());
 							if (!StringUtils.isEmpty(ins.getVer()))
 								valueSet.setVer(ins.getVer());
+							if (!StringUtils.isEmpty(ins.getMd5()))
+								valueSet.setMd5(ins.getMd5());
+							else
+								valueSet.setMd5("md5 is null");
 							da.setValueSet(valueSet);
 						} else if (ins.getType().equals(2))
 						{
@@ -303,7 +307,7 @@ public class ManageController implements ErrorCode
 							}
 							if (ssid != null)
 								da.setValueSet(ssid);
-						} else if (ins.getType().equals(4)) // 关闭
+						} else if (ins.getType().equals(5)) // 关闭
 						{
 							da.setOperation("setWirelessInfo");
 							da.setMethod("wireless");
@@ -314,7 +318,7 @@ public class ManageController implements ErrorCode
 							{
 								da.setValueSet(disabled);
 							}
-						} else if (ins.getType().equals(5)) // 开启
+						} else if (ins.getType().equals(4)) // 开启
 						{
 							da.setOperation("setWirelessInfo");
 							da.setMethod("wireless");
@@ -348,7 +352,7 @@ public class ManageController implements ErrorCode
 		String jsonString = "";
 		Data da = null;
 		JSONObject json = null;
-		System.out.println("====>" + data);
+		System.out.println("result====>" + data);
 		int unixTime = Time.toUnixTime(Time.now());
 		if (data != null)
 		{
@@ -413,7 +417,7 @@ public class ManageController implements ErrorCode
 						} else
 						{
 							da.setTransaction_id(String.valueOf(ins.getId()));
-							// 0重启，1升级，2修改ssid，3配置设备，4路由器关，5路由器开
+							// 0重启，1升级，2修改ssid，3配置设备，4路由器开，5路由器关
 							if (ins.getType().equals(0))
 							{
 								da.setOperation("restart");
@@ -427,6 +431,10 @@ public class ManageController implements ErrorCode
 									valueSet.setUrl(ins.getUrl());
 								if (!StringUtils.isEmpty(ins.getVer()))
 									valueSet.setVer(ins.getVer());
+								if (!StringUtils.isEmpty(ins.getMd5()))
+									valueSet.setMd5(ins.getMd5());
+								else
+									valueSet.setMd5("md5 is null");
 								da.setValueSet(valueSet);
 							} else if (ins.getType().equals(2))
 							{
@@ -444,7 +452,7 @@ public class ManageController implements ErrorCode
 								{
 									da.setValueSet(ssid);
 								}
-							} else if (ins.getType().equals(4)) // 关闭
+							} else if (ins.getType().equals(5)) // 关闭
 							{
 								da.setOperation("setWirelessInfo");
 								da.setMethod("wireless");
@@ -455,7 +463,7 @@ public class ManageController implements ErrorCode
 								{
 									da.setValueSet(disabled);
 								}
-							} else if (ins.getType().equals(5)) // 开启
+							} else if (ins.getType().equals(4)) // 开启
 							{
 								da.setOperation("setWirelessInfo");
 								da.setMethod("wireless");

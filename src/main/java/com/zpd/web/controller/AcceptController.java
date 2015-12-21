@@ -53,7 +53,7 @@ public class AcceptController implements ErrorCode
 			throws IOException
 	{
 		int code = FAILED;
-		System.out.println("====>" + data);
+		System.out.println("ins====>" + data);
 		code = this.instructionService.dealData(data);
 		Msg msg = new Msg(code);
 		String jsonData = JsonMessage.getJsonMsg(msg);
@@ -79,7 +79,7 @@ public class AcceptController implements ErrorCode
 			if (ins != null)
 			{
 				code = SUCCESS;
-				System.out.println("====>" + sn);
+				System.out.println("count====>" + sn);
 				cs = new Conns();
 				if (ins.getClientcount() != null)
 					cs.setConns(ins.getClientcount());

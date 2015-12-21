@@ -204,13 +204,19 @@ public class InstructionServiceImpl implements IInstructionService, ErrorCode
 															version.getUrl());
 												}
 												if (!StringUtils.isEmpty(
-														version.getVersion()))
+														version.getMd5()))
 												{
-													dfvl.setVersionPrev(version
-															.getVersion());
+													ins.setMd5(
+															version.getMd5());
+												}
+												if (!StringUtils.isEmpty(
+														di.getVersion()))
+													dfvl.setVersionPrev(
+															di.getVersion());
+												if (!StringUtils.isEmpty(
+														version.getVersion()))
 													ins.setVer(version
 															.getVersion());
-												}
 											}
 										}
 										ins.setCreatedat(unixTime);
@@ -223,11 +229,25 @@ public class InstructionServiceImpl implements IInstructionService, ErrorCode
 										{
 											try
 											{
-												int result1 = this.deviceFirmwareVersionLogsDao
-														.save(dfvl);
-												if (result1 > 0)
-													result = this.instructionDao
-															.save(ins);
+												DeviceFirmwareVersionLogs dfvlold = null;
+												dfvlold = this.deviceFirmwareVersionLogsDao
+														.querydfvlbydid(
+																di.getId(), 1);
+												if (dfvlold == null)
+												{
+													dfvlold = this.deviceFirmwareVersionLogsDao
+															.querydfvlbydid(
+																	di.getId(),
+																	2);
+													if (dfvlold == null)
+													{
+														int result1 = this.deviceFirmwareVersionLogsDao
+																.save(dfvl);
+														if (result1 > 0)
+															result = this.instructionDao
+																	.save(ins);
+													}
+												}
 											} catch (Exception e)
 											{
 												System.out.println("插入数据错误：" + i

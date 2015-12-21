@@ -28,7 +28,9 @@ import com.zpd.utils.Time;
 /**
  * 设备信息服务接口实现
  * 
- * @author Jacky @version v1.0.0
+ * @author wuyize
+ * 
+ * @version v1.0.0
  * @date 2015年11月22日
  * 
  */

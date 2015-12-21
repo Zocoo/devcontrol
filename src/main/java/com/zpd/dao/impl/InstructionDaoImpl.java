@@ -55,12 +55,12 @@ public class InstructionDaoImpl implements IInstructionDao
 	public int save(Instruction t)
 	{
 		int result = -1;
-		String sql = "INSERT INTO instruction (\n" + "	`remark`,\n"
-				+ "	`ssid`,\n" + "	`ver`,\n" + "	`esn`,\n"
-				+ "	`updatedat`,\n" + "	`type`,\n" + "	`url`,\n"
-				+ "	`createdat`,\n" + "	`num`,\n" + "	`enable`\n" + ")\n"
-				+ "VALUES\n" + "	(\n"
-				+ ":remark ,:ssid ,:ver , :esn ,:updatedat ,:type ,:url ,:createdat ,:num ,:enable\n"
+		String sql = "INSERT INTO instruction (\n" + "	`md5`,\n"
+				+ "	`remark`,\n" + "	`ssid`,\n" + "	`ver`,\n"
+				+ "	`esn`,\n" + "	`updatedat`,\n" + "	`type`,\n"
+				+ "	`url`,\n" + "	`createdat`,\n" + "	`num`,\n"
+				+ "	`enable`\n" + ")\n" + "VALUES\n" + "	(\n"
+				+ ":md5 , :remark ,:ssid ,:ver , :esn ,:updatedat ,:type ,:url ,:createdat ,:num ,:enable\n"
 				+ "	)";
 		SqlParameterSource sps = new BeanPropertySqlParameterSource(t);
 		KeyHolder key = new GeneratedKeyHolder();
@@ -86,7 +86,7 @@ public class InstructionDaoImpl implements IInstructionDao
 	public int update(Instruction t)
 	{
 		int result = -1;
-		String sql = "update instruction set `remark`=:remark,`ssid`=:ssid,`result`=:result,`ver`=:ver,`esn`=:esn,`type`=:type,\n"
+		String sql = "update instruction set `md5`=:md5,`remark`=:remark,`ssid`=:ssid,`result`=:result,`ver`=:ver,`esn`=:esn,`type`=:type,\n"
 				+ "`url`=:url,`num`=:num,`enable`=:enable,`createdat`=:createdat,`updatedat`=:updatedat WHERE `id`=:id";
 		SqlParameterSource sps = new BeanPropertySqlParameterSource(t);
 		try

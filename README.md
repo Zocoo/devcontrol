@@ -7,7 +7,7 @@ result
     "transaction_id": "68",
     "operation": "register",
     "type": "RESPONSE",
-    "code": 1,
+    "code": 0,
     "message": "success",
     "valueSet": {}
 }
