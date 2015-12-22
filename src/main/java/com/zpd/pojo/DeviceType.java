@@ -34,6 +34,18 @@ public class DeviceType implements Serializable
 	// 是否可用
 	private Boolean				enable;
 	private static final long	serialVersionUID	= 1L;
+	// 厂商ID
+	private Integer				vendorId;
+
+	public Integer getVendorId()
+	{
+		return vendorId;
+	}
+
+	public void setVendorId(Integer vendorId)
+	{
+		this.vendorId = vendorId;
+	}
 
 	public Integer getId()
 	{

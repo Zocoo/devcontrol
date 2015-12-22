@@ -197,35 +197,6 @@ public class DeviceInfoServiceImpl implements IDeviceInfoService, ErrorCode
 		if (di != null && dm != null)
 		{
 			int unixTime = Time.toUnixTime(Time.now());
-			DeviceCategories dc = this.deviceCategoriesDao.queryDeviceC("路由器");
-			if (!StringUtils.isEmpty(dm.getModel()) && dc != null)
-			{
-				di.setDeviceCategoryId(dc.getId());
-				DeviceType dt = null;
-				dt = this.deviceInfoDao.getDeviceTypeByName(dm.getModel(),
-						dc.getId());// 查看是否有这个型号
-				if (dt == null)
-				{
-					dt = new DeviceType();
-					dt.setEnable(true);
-					dt.setIntro("");
-					if (dc.getId() != null
-							&& !StringUtils.isEmpty((dm.getModel())))
-					{
-						dt.setName(dm.getModel());
-						dt.setDeviceCategoryId(dc.getId());
-						dt.setCreatedAt(unixTime);
-						dt.setUpdatedAt(unixTime);
-						int result = this.deviceTypeDao.save(dt);
-						if (result > 0)
-							if (dt.getId() != null)
-								di.setDeviceTypeId(dt.getId());
-					}
-				} else
-				{
-					di.setDeviceTypeId(dt.getId());
-				}
-			}
 			if (!StringUtils.isEmpty(dm.getVendor()))
 			{
 				Vendor vd = this.deviceInfoDao.getVendorByName(dm.getVendor());// 查看是否有这个厂商
@@ -246,6 +217,39 @@ public class DeviceInfoServiceImpl implements IDeviceInfoService, ErrorCode
 					di.setVendorId(vd.getId());
 				}
 			}
+
+			DeviceCategories dc = this.deviceCategoriesDao.queryDeviceC("路由器");
+			if (!StringUtils.isEmpty(dm.getModel()) && dc != null
+					&& di.getVendorId() != null)
+			{
+				di.setDeviceCategoryId(dc.getId());
+				DeviceType dt = null;
+				dt = this.deviceInfoDao.getDeviceTypeByName(dm.getModel(),
+						dc.getId(), di.getVendorId());// 查看是否有这个型号
+				if (dt == null)
+				{
+					dt = new DeviceType();
+					dt.setEnable(true);
+					dt.setIntro("");
+					if (dc.getId() != null
+							&& !StringUtils.isEmpty((dm.getModel())))
+					{
+						dt.setName(dm.getModel());
+						dt.setDeviceCategoryId(dc.getId());
+						dt.setCreatedAt(unixTime);
+						dt.setUpdatedAt(unixTime);
+						dt.setVendorId(di.getVendorId());
+						int result = this.deviceTypeDao.save(dt);
+						if (result > 0)
+							if (dt.getId() != null)
+								di.setDeviceTypeId(dt.getId());
+					}
+				} else
+				{
+					di.setDeviceTypeId(dt.getId());
+				}
+			}
+
 			di.setNetState(1);// 路由器在线
 			if (!StringUtils.isEmpty(dm.getFireware()))
 				di.setVersion(dm.getFireware());

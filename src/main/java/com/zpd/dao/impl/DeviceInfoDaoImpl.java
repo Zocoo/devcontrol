@@ -208,12 +208,12 @@ public class DeviceInfoDaoImpl implements IDeviceInfoDao
 	}
 
 	@Override
-	public DeviceType getDeviceTypeByName(String name, Integer cid)
+	public DeviceType getDeviceTypeByName(String name, Integer cid,Integer vid)
 	{
 		List<DeviceType> list = null;
 		String sql = "SELECT\n" + "	*\n" + "FROM\n" + "	device_types\n"
 				+ "WHERE\n" + "	ENABLE = 1\n"
-				+ "AND name =:name and device_category_id=" + cid;
+				+ "AND name =:name and device_category_id=" + cid +"\n and vendor_id="+vid;
 		SqlParameterSource sps = new MapSqlParameterSource("name", name);
 		try
 		{

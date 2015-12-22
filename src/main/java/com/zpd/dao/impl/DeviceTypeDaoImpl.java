@@ -23,7 +23,8 @@ import com.zpd.utils.Paginate;
  * @author wuyize
  *
  */
-public class DeviceTypeDaoImpl implements IDeviceTypeDao {
+public class DeviceTypeDaoImpl implements IDeviceTypeDao
+{
 	private final static Logger logger = LogFactory
 			.getLogger(DeviceTypeDaoImpl.class);
 
@@ -34,97 +35,107 @@ public class DeviceTypeDaoImpl implements IDeviceTypeDao {
 	 * 
 	 * @param jdbcTemplate
 	 */
-	public void setJdbcTemplate(NamedParameterJdbcTemplate jdbcTemplate) {
+	public void setJdbcTemplate(NamedParameterJdbcTemplate jdbcTemplate)
+	{
 		this.jdbcTemplate = jdbcTemplate;
 	}
 
 	@Override
-	public int save(DeviceType t) {
+	public int save(DeviceType t)
+	{
 		int result = -1;
-		String sql = "INSERT INTO device_types (\n"
-				+ "	`device_category_id`,\n"
-				+ "	`name`,\n"
-				+ "	`intro`,\n"
-				+ "	`created_at`,\n"
-				+ "	`updated_at`,\n"
-				+ "	`enable`\n"
-				+ ")\n"
-				+ "VALUES\n"
-				+ "	(\n"
-				+ "	:deviceCategoryId ,:name ,:intro ,:createdAt ,:updatedAt ,:enable\n"
+		String sql = "INSERT INTO device_types (\n" + "	`vendor_id`,\n"
+				+ "	`device_category_id`,\n" + "	`name`,\n" + "	`intro`,\n"
+				+ "	`created_at`,\n" + "	`updated_at`,\n" + "	`enable`\n"
+				+ ")\n" + "VALUES\n" + "	(\n"
+				+ "	:vendorId , :deviceCategoryId ,:name ,:intro ,:createdAt ,:updatedAt ,:enable\n"
 				+ "	)";
 		SqlParameterSource sps = new BeanPropertySqlParameterSource(t);
 		KeyHolder key = new GeneratedKeyHolder();
-		try {
+		try
+		{
 			result = this.jdbcTemplate.update(sql, sps, key);
 			t.setId(key.getKey().intValue());
-		} catch (DataAccessException e) {
+		} catch (DataAccessException e)
+		{
 			logger.error(e.getMessage());
 		}
 		return result;
 	}
 
 	@Override
-	public int delete(int id) {
+	public int delete(int id)
+	{
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public int update(DeviceType t) {
+	public int update(DeviceType t)
+	{
 		int result = -1;
 		String sql = "update device_types set `device_category_id`=:deviceCategoryId,\n"
 				+ "`created_at`=:createdAt,`updated_at`=:updatedAt,\n"
-				+ "`vendor_id`=:vendorId,`name`=:name,`intro`=:intro ,`vendor_id`=:vendorId WHERE `id`=:id";
+				+ "`vendor_id`=:vendorId,`name`=:name,`intro`=:intro  WHERE `id`=:id";
 		SqlParameterSource sps = new BeanPropertySqlParameterSource(t);
-		try {
+		try
+		{
 			result = this.jdbcTemplate.update(sql, sps);
-		} catch (DataAccessException e) {
+		} catch (DataAccessException e)
+		{
 			logger.error(e.getMessage());
 		}
 		return result;
 	}
 
 	@Override
-	public DeviceType get(int id) {
+	public DeviceType get(int id)
+	{
 		List<DeviceType> list = null;
 		String sql = "SELECT\n" + "	*\n" + "FROM\n" + "	device_types\n"
 				+ "WHERE\n" + "	ENABLE = 1\n" + "AND id = " + id;
-		try {
+		try
+		{
 			list = this.jdbcTemplate.query(sql,
 					new BeanPropertyRowMapper<DeviceType>(DeviceType.class));
-		} catch (DataAccessException e) {
+		} catch (DataAccessException e)
+		{
 			logger.error(e.getMessage());
 		}
 		return (list != null && list.size() == 1) ? list.get(0) : null;
 	}
 
 	@Override
-	public long getCount() {
+	public long getCount()
+	{
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public long getCount(int key, int value) {
+	public long getCount(int key, int value)
+	{
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public List<DeviceType> initTop(int limit) {
+	public List<DeviceType> initTop(int limit)
+	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<DeviceType> paginate(Paginate pag) {
+	public List<DeviceType> paginate(Paginate pag)
+	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<DeviceType> paginate(int key, int value, Paginate pag) {
+	public List<DeviceType> paginate(int key, int value, Paginate pag)
+	{
 		// TODO Auto-generated method stub
 		return null;
 	}
