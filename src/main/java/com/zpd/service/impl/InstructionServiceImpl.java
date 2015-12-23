@@ -58,8 +58,7 @@ public class InstructionServiceImpl implements IInstructionService, ErrorCode
 	@Override
 	public int save(Instruction t)
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		return this.instructionDao.save(t);
 	}
 
 	@Override

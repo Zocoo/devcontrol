@@ -53,8 +53,38 @@ public class DeviceInfoDaoImpl implements IDeviceInfoDao
 	@Override
 	public int save(DeviceInfo t)
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		int result = -1;
+		String sql = "INSERT INTO device_details (\n" + "	`order_id`,\n"
+				+ "	`device_category_id`,\n" + "	`device_type_id`,\n"
+				+ "	`unique_code`,\n" + "	`sno`,\n" + "	`esn`,\n"
+				+ "	`mac`,\n" + "	`status`,\n" + "	`type`,\n"
+				+ "	`open_at`,\n" + "	`close_at`,\n" + "	`main`,\n"
+				+ "	`created_at`,\n" + "	`updated_at`,\n" + "	`enable`,\n"
+				+ "	`scene_id`,\n" + "	`net_state`,\n" + "	`wlan_ip`,\n"
+				+ "	`version`,\n" + "	`vendor`,\n" + "	`apk_version`,\n"
+				+ "	`apk_server_version`,\n" + "	`monitor_sno`,\n"
+				+ "	`monitor_status`,\n" + "	`device_type`,\n"
+				+ "	`ssid`,\n" + "	`close`,\n" + "	`open`,\n" + "	`h_px`,\n"
+				+ "	`w_px`,\n" + "	`screen_type`,\n" + "	`vendor_id`\n"
+				+ ")\n" + "VALUES\n" + "	(\n"
+				+ "	:orderId , :deviceCategoryId ,:deviceTypeId ,:uniqueCode ,:sno ,:esn ,:mac,"
+				+ " :status , :type ,:openAt ,:closeAt ,"
+				+ " :main , :createdAt ,:updatedAt ,:enable ,"
+				+ " :sceneId , :netState ,:wlanIp ,:version ,"
+				+ " :vendor , :apkVersion ,:apkServerVersion ,:monitorSno ,"
+				+ " :monitorStatus , :deviceType ,:ssid ,:close ,"
+				+ " :open , :hPx ,:wPx ,:screenType , :vendorId" + "\n" + "	)";
+		SqlParameterSource sps = new BeanPropertySqlParameterSource(t);
+		KeyHolder key = new GeneratedKeyHolder();
+		try
+		{
+			result = this.jdbcTemplate.update(sql, sps, key);
+			t.setId(key.getKey().intValue());
+		} catch (DataAccessException e)
+		{
+			logger.error(e.getMessage());
+		}
+		return result;
 	}
 
 	@Override
@@ -208,12 +238,13 @@ public class DeviceInfoDaoImpl implements IDeviceInfoDao
 	}
 
 	@Override
-	public DeviceType getDeviceTypeByName(String name, Integer cid,Integer vid)
+	public DeviceType getDeviceTypeByName(String name, Integer cid, Integer vid)
 	{
 		List<DeviceType> list = null;
 		String sql = "SELECT\n" + "	*\n" + "FROM\n" + "	device_types\n"
 				+ "WHERE\n" + "	ENABLE = 1\n"
-				+ "AND name =:name and device_category_id=" + cid +"\n and vendor_id="+vid;
+				+ "AND name =:name and device_category_id=" + cid
+				+ "\n and vendor_id=" + vid;
 		SqlParameterSource sps = new MapSqlParameterSource("name", name);
 		try
 		{

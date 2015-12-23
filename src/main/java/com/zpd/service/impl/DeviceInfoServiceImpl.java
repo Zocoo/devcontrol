@@ -249,7 +249,6 @@ public class DeviceInfoServiceImpl implements IDeviceInfoService, ErrorCode
 					di.setDeviceTypeId(dt.getId());
 				}
 			}
-
 			di.setNetState(1);// 路由器在线
 			if (!StringUtils.isEmpty(dm.getFireware()))
 				di.setVersion(dm.getFireware());

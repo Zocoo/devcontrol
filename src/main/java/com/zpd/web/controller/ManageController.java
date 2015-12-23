@@ -76,6 +76,7 @@ public class ManageController implements ErrorCode
 	public String register(ModelMap model,
 			@RequestBody(required = true) String data) throws IOException
 	{
+		int unixTime = Time.toUnixTime(Time.now());
 		JSONObject json = null;
 		DeviceInfo di = null;
 		int code = FAILED;
@@ -91,89 +92,89 @@ public class ManageController implements ErrorCode
 					String name = "heartbeat";
 					if (!StringUtils.isEmpty(json.getString("gw_id")))
 						name = name + json.getString("gw_id");
-					if (di != null)
+					if (di == null)
 					{
-						DeviceMsg deviceMsg = new DeviceMsg();
-						code = SUCCESS;
-						DeviceStatus ds = RedisClient.get(name,
-								DeviceStatus.class);
-						RedisClient.del(name);
-						if (ds == null)
-							ds = new DeviceStatus();
-						JSONObject jb = null;
-						jb = json.getJSONObject("valueSet");
-						if (jb != null)
-						{
-							int unixTime = Time.toUnixTime(Time.now());
-							ds.setOnline(true);
-							ds.setPingtime(unixTime);
-							if (!StringUtils.isEmpty(json.getString(("gw_id"))))
-							{
-								deviceMsg.setEsn(json.getString("gw_id"));
-								ds.setEsn(json.getString("gw_id"));
-							}
-							if (!StringUtils.isEmpty(jb.getString("gw_mac")))
-							{
-								deviceMsg.setMac(jb.getString("gw_mac"));
-								ds.setGwmac(jb.getString("gw_mac"));
-							}
-							if (!StringUtils.isEmpty(jb.getString("ssid")))
-							{
-								deviceMsg.setSsid(jb.getString("ssid"));
-								ds.setSsid(jb.getString("ssid"));
-							}
-							if (!StringUtils
-									.isEmpty(jb.getString("gw_address")))
-								ds.setGwaddress(jb.getString("gw_address"));
-							if (!StringUtils
-									.isEmpty(jb.getString("router_vendor")))
-							{
-								deviceMsg.setVendor(
-										jb.getString("router_vendor"));
-								ds.setRoutervendor(
-										jb.getString("router_vendor"));
-							}
-							if (!StringUtils
-									.isEmpty(jb.getString("router_type")))
-							{
-								deviceMsg.setModel(jb.getString("router_type"));
-								ds.setRoutertype(jb.getString("router_type"));
-							}
-							if (!StringUtils.isEmpty(jb.getString("wan_ip")))
-							{
-								deviceMsg.setWlanip(jb.getString("wan_ip"));
-								ds.setWanip(jb.getString("wan_ip"));
-							}
-							if (!StringUtils.isEmpty(jb.getString("sv")))
-							{
-								deviceMsg.setFireware(jb.getString("sv"));
-								ds.setSv(jb.getString("sv"));
-								DeviceFirmwareVersionLogs dfvl = this.deviceFirmwareVersionLogsService
-										.querydfvlbydid(di.getId(), 2);
-								if (dfvl != null)
-								{
-									if (jb.getString("sv")
-											.equals(dfvl.getVersionPrev()))
-									{
-										dfvl.setStatus(4);
-									} else
-									{
-										dfvl.setStatus(3);
-									}
-									dfvl.setVersion(jb.getString("sv"));
-									this.deviceFirmwareVersionLogsService
-											.update(dfvl);
-								}
-							}
-							if (jb.getInteger("check_time") != null)
-								ds.setChecktime(jb.getInteger("check_time"));
-							if (ds != null)
-								if (!StringUtils.isEmpty(ds.getEsn()))
-									RedisClient.set(name, ds);
-						}
-						code = this.deviceInfoService.updateFromMp(di,
-								deviceMsg);
+						di = new DeviceInfo();
+						di.setEsn(json.getString("gw_id"));
+						di.setSno(json.getString("gw_id"));
+						di.setEnable(true);
+						di.setMain(false);
+						di.setCreatedAt(unixTime);
+						di.setUpdatedAt(unixTime);
+						this.deviceInfoService.save(di);
 					}
+					DeviceMsg deviceMsg = new DeviceMsg();
+					code = SUCCESS;
+					DeviceStatus ds = RedisClient.get(name, DeviceStatus.class);
+					RedisClient.del(name);
+					if (ds == null)
+						ds = new DeviceStatus();
+					JSONObject jb = null;
+					jb = json.getJSONObject("valueSet");
+					if (jb != null)
+					{
+						ds.setOnline(true);
+						ds.setPingtime(unixTime);
+						if (!StringUtils.isEmpty(json.getString(("gw_id"))))
+						{
+							deviceMsg.setEsn(json.getString("gw_id"));
+							ds.setEsn(json.getString("gw_id"));
+						}
+						if (!StringUtils.isEmpty(jb.getString("gw_mac")))
+						{
+							deviceMsg.setMac(jb.getString("gw_mac"));
+							ds.setGwmac(jb.getString("gw_mac"));
+						}
+						if (!StringUtils.isEmpty(jb.getString("ssid")))
+						{
+							deviceMsg.setSsid(jb.getString("ssid"));
+							ds.setSsid(jb.getString("ssid"));
+						}
+						if (!StringUtils.isEmpty(jb.getString("gw_address")))
+							ds.setGwaddress(jb.getString("gw_address"));
+						if (!StringUtils.isEmpty(jb.getString("router_vendor")))
+						{
+							deviceMsg.setVendor(jb.getString("router_vendor"));
+							ds.setRoutervendor(jb.getString("router_vendor"));
+						}
+						if (!StringUtils.isEmpty(jb.getString("router_type")))
+						{
+							deviceMsg.setModel(jb.getString("router_type"));
+							ds.setRoutertype(jb.getString("router_type"));
+						}
+						if (!StringUtils.isEmpty(jb.getString("wan_ip")))
+						{
+							deviceMsg.setWlanip(jb.getString("wan_ip"));
+							ds.setWanip(jb.getString("wan_ip"));
+						}
+						if (!StringUtils.isEmpty(jb.getString("sv")))
+						{
+							deviceMsg.setFireware(jb.getString("sv"));
+							ds.setSv(jb.getString("sv"));
+							DeviceFirmwareVersionLogs dfvl = this.deviceFirmwareVersionLogsService
+									.querydfvlbydid(di.getId(), 2);
+							if (dfvl != null)
+							{
+								if (jb.getString("sv")
+										.equals(dfvl.getVersionPrev()))
+								{
+									dfvl.setStatus(4);
+								} else
+								{
+									dfvl.setStatus(3);
+								}
+								dfvl.setVersion(jb.getString("sv"));
+								this.deviceFirmwareVersionLogsService
+										.update(dfvl);
+							}
+						}
+						if (jb.getInteger("check_time") != null)
+							ds.setChecktime(jb.getInteger("check_time"));
+						if (ds != null)
+							if (!StringUtils.isEmpty(ds.getEsn()))
+								RedisClient.set(name, ds);
+					}
+					code = this.deviceInfoService.updateFromMp(di, deviceMsg);
 				}
 		}
 		Data da = new Data();
