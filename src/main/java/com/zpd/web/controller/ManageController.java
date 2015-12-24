@@ -246,7 +246,14 @@ public class ManageController implements ErrorCode
 								ds.setUptime(jo.getInteger("up_time"));
 							if (ds != null)
 								RedisClient.set(name, ds);
-							if (di.getNetState().equals(2))
+							if (di.getNetState() != null)
+							{
+								if (di.getNetState().equals(2))
+								{
+									di.setNetState(1);
+									this.deviceInfoService.update(di);
+								}
+							} else
 							{
 								di.setNetState(1);
 								this.deviceInfoService.update(di);
