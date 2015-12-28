@@ -98,6 +98,7 @@ public class ManageController implements ErrorCode
 						di.setEsn(json.getString("gw_id"));
 						di.setSno(json.getString("gw_id"));
 						di.setEnable(true);
+						di.setDeviceType(3);
 						di.setMain(false);
 						di.setCreatedAt(unixTime);
 						di.setUpdatedAt(unixTime);
