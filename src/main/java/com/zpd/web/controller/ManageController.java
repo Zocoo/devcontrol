@@ -174,7 +174,10 @@ public class ManageController implements ErrorCode
 							if (!StringUtils.isEmpty(ds.getEsn()))
 								RedisClient.set(name, ds);
 					}
-					code = this.deviceInfoService.updateFromMp(di, deviceMsg);
+					int resuat = this.deviceInfoService.updateFromMp(di,
+							deviceMsg);
+					if (resuat > 0)
+						code = SUCCESS;
 				}
 		}
 		Data da = new Data();
