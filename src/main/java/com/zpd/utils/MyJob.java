@@ -103,15 +103,23 @@ public class MyJob
 
 	public static void main(String[] args)
 	{
-		Set<String> keys = jedis.keys("*");
+		int unixTime = Time.toUnixTime(Time.now());
+		Set<String> keys = jedis.keys("h*");
+		int i = 0;
 		Iterator<String> it = keys.iterator();
 		while (it.hasNext())
 		{
+			i++;
 			String key = it.next();
 			// RedisClient.del(key);
 			DeviceStatus ds = new DeviceStatus();
 			ds = RedisClient.get(key, DeviceStatus.class);
-			System.out.println("===>" + ds.getEsn() + "---" + ds.getPingtime());
+			if (unixTime - ds.getPingtime() > 360)
+			{
+				System.out.println(i + "----------------------->" + ds.getEsn()
+						+ "====" + ds.getPingtime() + "===" + ds.isOnline()
+						+ "===" + (unixTime - ds.getPingtime()));
+			}
 		}
 	}
 }

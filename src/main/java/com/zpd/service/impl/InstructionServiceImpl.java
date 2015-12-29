@@ -118,6 +118,7 @@ public class InstructionServiceImpl implements IInstructionService, ErrorCode
 	@Override
 	public Integer dealData(String str)
 	{
+		int c1 = 0;
 		int result = -1;
 		int unixTime = Time.toUnixTime(Time.now());
 		JSONObject json = null;
@@ -246,7 +247,8 @@ public class InstructionServiceImpl implements IInstructionService, ErrorCode
 															result = this.instructionDao
 																	.save(ins);
 													}
-												}
+												} else
+													c1 = 1;
 											} catch (Exception e)
 											{
 												System.out.println("插入数据错误：" + i
@@ -337,7 +339,10 @@ public class InstructionServiceImpl implements IInstructionService, ErrorCode
 						}
 					}
 		}
-		return result > 0 ? SUCCESS : FAILED;
+		if (c1 == 0)
+			return result > 0 ? SUCCESS : FAILED;
+		else
+			return UPING;
 	}
 
 	@Override
