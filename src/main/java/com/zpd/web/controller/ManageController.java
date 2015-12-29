@@ -98,6 +98,7 @@ public class ManageController implements ErrorCode
 						di.setEsn(json.getString("gw_id"));
 						di.setSno(json.getString("gw_id"));
 						di.setEnable(true);
+						di.setDeviceType(3);
 						di.setMain(false);
 						di.setCreatedAt(unixTime);
 						di.setUpdatedAt(unixTime);
@@ -174,7 +175,10 @@ public class ManageController implements ErrorCode
 							if (!StringUtils.isEmpty(ds.getEsn()))
 								RedisClient.set(name, ds);
 					}
-					code = this.deviceInfoService.updateFromMp(di, deviceMsg);
+					int resuat = this.deviceInfoService.updateFromMp(di,
+							deviceMsg);
+					if (resuat > 0)
+						code = SUCCESS;
 				}
 		}
 		Data da = new Data();
@@ -246,7 +250,14 @@ public class ManageController implements ErrorCode
 								ds.setUptime(jo.getInteger("up_time"));
 							if (ds != null)
 								RedisClient.set(name, ds);
-							if (di.getNetState().equals(2))
+							if (di.getNetState() != null)
+							{
+								if (di.getNetState().equals(2))
+								{
+									di.setNetState(1);
+									this.deviceInfoService.update(di);
+								}
+							} else
 							{
 								di.setNetState(1);
 								this.deviceInfoService.update(di);

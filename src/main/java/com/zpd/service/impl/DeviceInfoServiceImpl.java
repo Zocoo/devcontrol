@@ -69,8 +69,7 @@ public class DeviceInfoServiceImpl implements IDeviceInfoService, ErrorCode
 	@Override
 	public int save(DeviceInfo t)
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		return this.deviceInfoDao.save(t);
 	}
 
 	/*
